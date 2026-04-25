@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Manage your products lifecycle with advanced AI insights from OpenAI, Gemini, and Groq.">
     <title>LifeSync AI | Product Lifecycle Dashboard</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css?v=1.1">
     <link rel="stylesheet" href="css/landing.css">
@@ -1040,9 +1041,7 @@
 
             <!-- Login Card -->
             <div id="login-card" class="auth-card glass">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                    <div class="logo"><i class="fas fa-sync-alt"></i> LifeSync AI</div>
-                </div>
+                <div class="logo" style="margin-bottom: 15px; margin-top: -10px;"><i class="fas fa-sync-alt"></i> LifeSync AI</div>
                 <h2>Welcome Back</h2>
                 <p style="color: var(--text-muted); margin-bottom: 30px;">Sign in to access your inventory</p>
                 <form id="login-form">
@@ -1052,9 +1051,21 @@
                     </div>
                     <div class="form-group">
                         <label>Password</label>
-                        <input type="password" id="login-password" placeholder="••••••••" required>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="login-password" placeholder="••••••••" required>
+                            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('login-password', this)">
+                                <i class="far fa-eye"></i>
+                            </button>
+                        </div>
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">Sign In <i class="fas fa-arrow-right"></i></button>
+                    <div class="auth-divider"><span>or</span></div>
+                    <button type="button" class="btn-google" id="google-login" onclick="initiateGoogleAuth()">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" class="google-icon">
+                        <div class="google-loading"></div>
+                        <span class="google-text">Continue with Google</span>
+                    </button>
+                    <div id="google-login-error" class="google-error"></div>
                 </form>
                 <p style="margin-top: 25px; font-size: 0.9rem; color: var(--text-muted);">
                     Don't have an account? <a href="#" id="show-register" style="color: var(--primary); text-decoration: none;">Create one</a>
@@ -1063,9 +1074,7 @@
 
             <!-- Register Card -->
             <div id="register-card" class="auth-card glass" style="display: none;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                    <div class="logo"><i class="fas fa-sync-alt"></i> LifeSync AI</div>
-                </div>
+                <div class="logo" style="margin-bottom: 15px; margin-top: -10px;"><i class="fas fa-sync-alt"></i> LifeSync AI</div>
                 <h2>Create Account</h2>
                 <p style="color: var(--text-muted); margin-bottom: 30px;">Start your intelligent product tracking</p>
                 <form id="register-form">
@@ -1079,9 +1088,30 @@
                     </div>
                     <div class="form-group">
                         <label>Password</label>
-                        <input type="password" id="reg-password" placeholder="••••••••" required>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="reg-password" placeholder="••••••••" required>
+                            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('reg-password', this)">
+                                <i class="far fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm Password</label>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="reg-confirm-password" placeholder="••••••••" required>
+                            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('reg-confirm-password', this)">
+                                <i class="far fa-eye"></i>
+                            </button>
+                        </div>
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">Get Started <i class="fas fa-user-plus"></i></button>
+                    <div class="auth-divider"><span>or</span></div>
+                    <button type="button" class="btn-google" id="google-register" onclick="initiateGoogleAuth()">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" class="google-icon">
+                        <div class="google-loading"></div>
+                        <span class="google-text">Continue with Google</span>
+                    </button>
+                    <div id="google-register-error" class="google-error"></div>
                 </form>
                 <p style="margin-top: 25px; font-size: 0.9rem; color: var(--text-muted);">
                     Already have an account? <a href="#" id="show-login" style="color: var(--primary); text-decoration: none;">Sign in</a>

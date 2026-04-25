@@ -158,15 +158,39 @@ p, label, input, select, textarea, button, span, div {
 .auth-card {
     width: 100%;
     max-width: 450px;
-    padding: 50px;
+    max-height: 92vh;
+    padding: 35px 40px;
     text-align: center;
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: 28px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 32px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.12);
     animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     z-index: 1;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.auth-card::-webkit-scrollbar {
+    display: none;
+}
+
+.auth-card h2 {
+    font-size: 1.75rem;
+    margin-bottom: 8px;
+    color: var(--text-main);
+}
+
+.auth-card p {
+    margin-bottom: 20px;
+}
+
+.auth-card .logo {
+    margin-bottom: 0;
+    width: 100%;
+    justify-content: center;
 }
 
 @keyframes fadeIn {
@@ -179,6 +203,99 @@ p, label, input, select, textarea, button, span, div {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* Google Auth Button */
+.auth-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 18px 0;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.auth-divider span {
+    padding: 0 15px;
+    font-weight: 500;
+}
+
+.btn-google {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    color: var(--text-main);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    outline: none;
+    position: relative;
+}
+
+.btn-google:hover {
+    background: #f9fafb;
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.btn-google:active {
+    transform: scale(0.98);
+}
+
+.btn-google:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.btn-google img {
+    width: 18px;
+    height: 18px;
+}
+
+.google-loading {
+    display: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #e2e8f0;
+    border-top: 2px solid #3b82f6;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.btn-google.loading .google-icon {
+    display: none;
+}
+
+.btn-google.loading .google-loading {
+    display: block;
+}
+
+.google-error {
+    margin-top: 15px;
+    font-size: 0.85rem;
+    color: #ef4444;
+    display: none;
+    text-align: center;
+    animation: fadeIn 0.3s ease;
 }
 
 /* Auth Background Visuals Layer */
@@ -413,7 +530,7 @@ p, label, input, select, textarea, button, span, div {
 }
 
 .form-group {
-    margin-bottom: 18px;
+    margin-bottom: 14px;
     text-align: left;
 }
 
@@ -438,6 +555,42 @@ p, label, input, select, textarea, button, span, div {
 
 .form-group input::placeholder {
     color: #94a3b8; /* Visible slate placeholder */
+}
+
+.password-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-input-wrapper input {
+    padding-right: 50px !important;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    padding: 5px;
+    z-index: 2;
+    outline: none;
+}
+
+.password-toggle:hover {
+    color: var(--primary);
+}
+
+.password-toggle:focus {
+    color: var(--primary);
 }
 
 .form-group input:focus {

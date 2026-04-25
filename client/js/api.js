@@ -73,7 +73,8 @@ const api = {
     auth: {
         login: (credentials) => api.request('/auth/login', 'POST', credentials, false),
         register: (userData) => api.request('/auth/register', 'POST', userData, false),
-        getMe: () => api.request('/auth/me')
+        getMe: () => api.request('/auth/me'),
+        googleLogin: (credential) => api.request('/auth/google', 'POST', { credential }, false)
     },
 
     products: {
