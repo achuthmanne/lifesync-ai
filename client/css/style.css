@@ -133,14 +133,15 @@ p, label, input, select, textarea, button, span, div {
 
 /* Auth Pages */
 .auth-container {
+    width: 100%;
     height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 20px;
-    background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.08), transparent 400px),
-                radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.05), transparent 400px),
-                #f8fafc;
+    background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.1), transparent 600px),
+                radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.08), transparent 600px),
+                #fcfcfd;
     position: relative;
     overflow: hidden;
 }
@@ -178,6 +179,172 @@ p, label, input, select, textarea, button, span, div {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* Auth Background Visuals Layer */
+.auth-bg-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.auth-bg-visual {
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    opacity: 0.9;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: transparent;
+    border: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
+    filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.4));
+    transition: all 0.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.visual-tl, .visual-bl, .visual-tr, .visual-br { 
+    top: 0; 
+    left: 0; 
+    animation: none; 
+    will-change: transform;
+}
+
+@keyframes molecule-roam-1 {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    25% { transform: translate(20vw, 15vh) rotate(10deg); }
+    50% { transform: translate(45vw, -5vh) rotate(-5deg); }
+    75% { transform: translate(15vw, 25vh) rotate(5deg); }
+}
+
+@keyframes molecule-roam-2 {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    25% { transform: translate(-5vw, -35vh) rotate(-10deg); }
+    50% { transform: translate(35vw, -15vh) rotate(8deg); }
+    75% { transform: translate(5vw, -45vh) rotate(-4deg); }
+}
+
+@keyframes molecule-roam-3 {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    25% { transform: translate(-35vw, 10vh) rotate(12deg); }
+    50% { transform: translate(-10vw, 45vh) rotate(-8deg); }
+    75% { transform: translate(-45vw, 15vh) rotate(6deg); }
+}
+
+@keyframes molecule-roam-4 {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    25% { transform: translate(5vw, 35vh) rotate(-12deg); }
+    50% { transform: translate(-40vw, 10vh) rotate(10deg); }
+    75% { transform: translate(-10vw, 40vh) rotate(-6deg); }
+}
+
+/* Molecule Particle System */
+.particle-system {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.p-orbit {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: var(--primary);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    filter: blur(1px);
+    opacity: 0.6;
+}
+
+.p-orbit:nth-child(1) { animation: orbit-1 6s linear infinite; }
+.p-orbit:nth-child(2) { animation: orbit-2 8s linear infinite reverse; }
+
+@keyframes orbit-1 {
+    from { transform: rotate(0deg) translateX(120px) rotate(0deg); }
+    to { transform: rotate(360deg) translateX(120px) rotate(-360deg); }
+}
+
+@keyframes orbit-2 {
+    from { transform: rotate(0deg) translateX(150px) rotate(0deg); }
+    to { transform: rotate(360deg) translateX(150px) rotate(-360deg); }
+}
+
+.p-dash {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #ffffff;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    box-shadow: 0 0 10px var(--primary);
+    opacity: 0;
+}
+
+.p-dash:nth-child(3) { animation: dash-1 3s ease-out infinite; }
+.p-dash:nth-child(4) { animation: dash-2 4s ease-out infinite 1s; }
+
+@keyframes dash-1 {
+    0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    100% { transform: translate(-180px, -60px) scale(0); opacity: 0; }
+}
+
+@keyframes dash-2 {
+    0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    100% { transform: translate(180px, 100px) scale(0); opacity: 0; }
+}
+
+.auth-ai-status {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    opacity: 0.18;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    pointer-events: none;
+    font-weight: 600;
+}
+
+@keyframes text-pulse {
+    0%, 100% { opacity: 0.1; }
+    50% { opacity: 0.2; }
+}
+
+.auth-ai-status span {
+    display: flex;
+    gap: 4px;
+}
+
+.auth-ai-status span::after {
+    content: '...';
+    animation: typing-auth 1.5s steps(4, end) infinite;
+    width: 12px;
+    overflow: hidden;
+    display: inline-block;
+}
+
+@keyframes typing-auth {
+    from { width: 0; }
+    to { width: 12px; }
 }
 
 .logo {

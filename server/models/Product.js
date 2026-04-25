@@ -66,7 +66,7 @@ const productSchema = new mongoose.Schema({
         },
         provider: {
             type: String,
-            enum: ['OpenAI', 'Gemini', 'Groq', 'Offline', 'Local Engine'],
+            enum: ['OpenAI', 'Gemini', 'Groq', 'Cohere', 'Mock Engine', 'Offline', 'Local Engine'],
             default: 'Gemini'
         }
     },

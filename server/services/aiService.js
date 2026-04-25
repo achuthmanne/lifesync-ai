@@ -102,7 +102,7 @@ async function tryCohere(prompt) {
 
     const response = await Promise.race([
         cohere.chat({
-            model: "command-r-plus",
+            model: "command-r",
             message: finalPrompt,
         }),
         new Promise((_, reject) => setTimeout(() => reject(new Error('Cohere Timeout')), 15000))

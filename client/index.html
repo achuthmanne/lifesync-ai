@@ -1008,7 +1008,36 @@
     <!-- Auth Modal (Hidden by default) -->
     <div id="auth-modal" class="modal">
         <button class="close-modal-btn" id="close-auth-modal" style="position: absolute; top: 30px; right: 30px; z-index: 100; background: rgba(255,255,255,0.1); color: white;"><i class="fas fa-times"></i></button>
-        <div class="auth-container" style="max-width: 450px;">
+        <div class="auth-container">
+            <!-- Background Elements -->
+            <div class="auth-bg-layer">
+                <div class="auth-bg-visual visual-tl" style="background-image: url('assets/logos/chatgpt.png');">
+                    <div class="particle-system">
+                        <span class="p-orbit"></span><span class="p-orbit"></span>
+                        <span class="p-dash"></span><span class="p-dash"></span>
+                    </div>
+                </div>
+                <div class="auth-bg-visual visual-bl" style="background-image: url('assets/logos/gemini.png');">
+                    <div class="particle-system">
+                        <span class="p-orbit"></span><span class="p-orbit"></span>
+                        <span class="p-dash"></span><span class="p-dash"></span>
+                    </div>
+                </div>
+                <div class="auth-bg-visual visual-tr" style="background-image: url('assets/logos/groq.png');">
+                    <div class="particle-system">
+                        <span class="p-orbit"></span><span class="p-orbit"></span>
+                        <span class="p-dash"></span><span class="p-dash"></span>
+                    </div>
+                </div>
+                <div class="auth-bg-visual visual-br" style="background-image: url('assets/logos/cohere.png');">
+                    <div class="particle-system">
+                        <span class="p-orbit"></span><span class="p-orbit"></span>
+                        <span class="p-dash"></span><span class="p-dash"></span>
+                    </div>
+                </div>
+
+            </div>
+
             <!-- Login Card -->
             <div id="login-card" class="auth-card glass">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
@@ -1151,6 +1180,81 @@
 
                 // Initial play
                 videos[0].play().catch(e => console.log("Initial play failed", e));
+            }
+            // 3. AI Molecule Physics Engine
+            const logos = document.querySelectorAll('.auth-bg-visual');
+            const container = document.querySelector('.auth-container');
+            
+            if (logos.length > 0 && container) {
+                let nodes = Array.from(logos).map((logo, index) => {
+                    // Random start positions within container bounds
+                    const rect = container.getBoundingClientRect();
+                    const size = 180; // logo width/height
+                    return {
+                        el: logo,
+                        x: Math.random() * (rect.width - size),
+                        y: Math.random() * (rect.height - size),
+                        vx: (Math.random() - 0.5) * 4.5, // Increased speed
+                        vy: (Math.random() - 0.5) * 4.5, // Increased speed
+                        radius: size / 2,
+                        size: size
+                    };
+                });
+
+                function updateMolecules() {
+                    if (window.getComputedStyle(container.closest('.modal')).display === 'none') {
+                        requestAnimationFrame(updateMolecules);
+                        return;
+                    }
+
+                    const rect = container.getBoundingClientRect();
+                    
+                    nodes.forEach((node, i) => {
+                        node.x += node.vx;
+                        node.y += node.vy;
+
+                        // Boundary Collision (Bounce)
+                        if (node.x <= 0) { node.x = 0; node.vx *= -1; }
+                        if (node.x >= rect.width - node.size) { node.x = rect.width - node.size; node.vx *= -1; }
+                        if (node.y <= 0) { node.y = 0; node.vy *= -1; }
+                        if (node.y >= rect.height - node.size) { node.y = rect.height - node.size; node.vy *= -1; }
+
+                        // Node-to-Node Collision
+                        for (let j = i + 1; j < nodes.length; j++) {
+                            const other = nodes[j];
+                            const dx = (node.x + node.radius) - (other.x + other.radius);
+                            const dy = (node.y + node.radius) - (other.y + other.radius);
+                            const distance = Math.sqrt(dx * dx + dy * dy);
+                            const minDistance = node.radius + other.radius + 10; // Extra buffer
+
+                            if (distance < minDistance) {
+                                // Collision detected - Resolve by swapping velocities (elastic collision)
+                                const tempVx = node.vx;
+                                const tempVy = node.vy;
+                                node.vx = other.vx;
+                                node.vy = other.vy;
+                                other.vx = tempVx;
+                                other.vy = tempVy;
+                                
+                                // Prevent sticking
+                                const overlap = minDistance - distance;
+                                const nx = dx / distance;
+                                const ny = dy / distance;
+                                node.x += nx * overlap / 2;
+                                node.y += ny * overlap / 2;
+                                other.x -= nx * overlap / 2;
+                                other.y -= ny * overlap / 2;
+                            }
+                        }
+
+                        // Apply position
+                        node.el.style.transform = `translate(${node.x}px, ${node.y}px)`;
+                    });
+
+                    requestAnimationFrame(updateMolecules);
+                }
+
+                updateMolecules();
             }
         });
     </script>
