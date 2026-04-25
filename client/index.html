@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Manage your products lifecycle with advanced AI insights from OpenAI, Gemini, and Groq.">
+    <title>LifeSync AI | Product Lifecycle Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=1.1">
+    <link rel="stylesheet" href="css/warranty.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <div class="sidebar glass">
+            <div class="logo">
+                <i class="fas fa-sync-alt" style="font-size: 1.5rem;"></i> LifeSync
+            </div>
+            
+            <div style="margin-top: 40px; flex: 1;">
+                <div class="nav-item active" id="nav-dashboard">
+                    <i class="fas fa-columns"></i> Dashboard
+                </div>
+                <div class="nav-item" id="add-product-btn">
+                    <i class="fas fa-square-plus"></i> Add Product
+                </div>
+                <div class="nav-item" id="nav-analytics">
+                    <i class="fas fa-chart-pie"></i> Analytics
+                </div>
+                <div class="nav-item" id="nav-notifications">
+                    <i class="fas fa-bell"></i> Notifications
+                    <span class="notif-badge" id="notif-count-badge" style="display: flex;">9+</span>
+                </div>
+                <div class="nav-item" id="nav-warranty">
+                    <i class="fas fa-shield-halved"></i> Warranty Wallet
+                </div>
+            </div>
+            <div class="sidebar-footer">
+                <div class="sidebar-profile-wrapper">
+                    <div class="sidebar-profile" id="profile-toggle">
+                        <div class="avatar" id="user-avatar">?</div>
+                        <div class="profile-info">
+                            <span id="user-name">User</span>
+                            <span class="user-role">Member</span>
+                        </div>
+                        <i class="fas fa-ellipsis-v" style="font-size: 0.8rem; opacity: 0.5;"></i>
+                    </div>
+                    
+                    <div class="profile-dropdown glass" id="profile-dropdown">
+                        <div class="dropdown-item" onclick="showAbout()">
+                            <i class="fas fa-info-circle"></i>
+                            <span>About LifeSync</span>
+                        </div>
+                        <div class="dropdown-item" onclick="showHelp()">
+                            <i class="fas fa-question-circle"></i>
+                            <span>Help Center</span>
+                        </div>
+                        <div class="dropdown-item" onclick="showFeedback()">
+                            <i class="fas fa-comment-alt"></i>
+                            <span>Send Feedback</span>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item logout" id="logout-btn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard View -->
+            <div id="dashboard-view" class="view-section">
+                <header class="header">
+                    <div>
+                        <h1 id="welcome-text" class="welcome-title">Loading...</h1>
+                        <p class="welcome-subtitle">Manage your assets with multi-engine intelligence.</p>
+                    </div>
+                </header>
+                <!-- Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card glass">
+                        <h3>Total Products</h3>
+                        <div class="value" id="total-count">0</div>
+                    </div>
+                    <div class="stat-card glass">
+                        <h3>Active Warranty</h3>
+                        <div class="value" id="warranty-count">0</div>
+                    </div>
+                    <div class="stat-card glass">
+                        <h3>At Risk</h3>
+                        <div class="value" id="risk-count" style="color: var(--danger);">0</div>
+                    </div>
+                    <div class="stat-card glass">
+                        <h3>Health Score</h3>
+                        <div class="value" id="avg-health">0%</div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Body -->
+                <div class="dashboard-main-grid">
+                    <div class="products-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                            <h2 style="font-size: 1.5rem;">My Products</h2>
+                            <button class="btn-link" id="view-all-products-btn">View All <i class="fas fa-arrow-right"></i></button>
+                        </div>
+                        <div class="products-grid" id="products-list">
+                            <!-- Only first 4 items will appear here -->
+                        </div>
+                    </div>
+
+                    <!-- Insights & Analysis -->
+                    <div class="insights-section">
+                        <h2 style="font-size: 1.5rem; margin-bottom: 25px;">AI Insights</h2>
+                        <div class="glass" style="padding: 25px; margin-bottom: 30px; background: #ffffff;">
+                            <h4 style="margin-bottom: 15px; color: var(--text-muted);">Risk Distribution</h4>
+                            <canvas id="riskChart"></canvas>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics View -->
+            <div id="analytics-view" class="view-section" style="display: none;">
+                <header class="header">
+                    <div>
+                        <h2 style="font-size: 2rem; letter-spacing: -0.5px;">Product Diagnostics</h2>
+                        <p style="color: var(--text-muted); font-size: 0.95rem;">Real-time AI health assessment across your entire inventory.</p>
+                    </div>
+                    <button class="btn btn-primary" style="padding: 10px 24px; width: auto; font-size: 0.9rem;" id="refresh-analytics">
+                        <i class="fas fa-sync-alt"></i> Update Report
+                    </button>
+                </header>
+
+                <!-- AI Quick Summary -->
+                <div class="analytics-summary-grid">
+                    <div class="glass summary-card">
+                        <i class="fas fa-lightbulb" style="color: #fbbf24;"></i>
+                        <div>
+                            <span class="label">Top Category</span>
+                            <div class="value-small" id="top-category">-</div>
+                            <p class="summary-hint" id="top-category-hint">Most items in this group.</p>
+                        </div>
+                    </div>
+                    <div class="glass summary-card">
+                        <i class="fas fa-shield-alt" style="color: #4ade80;"></i>
+                        <div>
+                            <span class="label">System Health</span>
+                            <div class="value-small" id="overall-health-status">Excellent</div>
+                            <p class="summary-hint" id="health-hint">Average across inventory.</p>
+                        </div>
+                    </div>
+                    <div class="glass summary-card">
+                        <i class="fas fa-hourglass-half" style="color: #60a5fa;"></i>
+                        <div>
+                            <span class="label">Average Product Age</span>
+                            <div class="value-small" id="avg-age">0 Months</div>
+                            <p class="summary-hint" id="age-hint">Average time you've owned your products.</p>
+                        </div>
+                    </div>
+                    <div class="glass summary-card">
+                        <i class="fas fa-exclamation-triangle" style="color: #f87171;"></i>
+                        <div>
+                            <span class="label">Critical Status</span>
+                            <div class="value-small" id="attention-count">0 Items</div>
+                            <p class="summary-hint" id="attention-hint">Requires immediate action.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Executive Summary -->
+                <div id="analytics-content">
+                    <div class="glass" style="padding: 25px; margin-bottom: 30px; border-left: 4px solid var(--primary);">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                            <div class="ls-ai-logo" style="width: 1.2rem; height: 1.2rem;">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <defs>
+                                        <linearGradient id="ai-grad-static-1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" stop-color="var(--primary)" />
+                                            <stop offset="100%" stop-color="var(--accent)" />
+                                        </linearGradient>
+                                    </defs>
+                                    <!-- Maximum Spacing Ellipse -->
+                                    <path d="M3 9C3 6 7 4 12 4C17 4 21 6 21 9" stroke="url(#ai-grad-static-1)" stroke-width="2.2" stroke-linecap="round"/>
+                                    <path d="M18 8L21 11L24 8Z" fill="url(#ai-grad-static-1)" />
+                                    
+                                    <path d="M21 15C21 18 17 20 12 20C7 20 3 18 3 15" stroke="url(#ai-grad-static-1)" stroke-width="2.2" stroke-linecap="round"/>
+                                    <path d="M6 16L3 13L0 16Z" fill="url(#ai-grad-static-1)" />
+
+                                    <circle cx="12" cy="12" r="1.2" class="ai-core" fill="url(#ai-grad-static-1)">
+                                        <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite" />
+                                        <animate attributeName="r" values="1;1.5;1" dur="2s" repeatCount="indefinite" />
+                                    </circle>
+                                </svg>
+                            </div>
+                            <h4 style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem;">AI Executive Summary</h4>
+                        </div>
+                        <p id="ai-exec-summary" style="line-height: 1.6; color: var(--text-main); font-size: 1.05rem;">
+                            Analyzing your inventory patterns...
+                        </p>
+                    </div>
+
+                    <div class="analytics-grid">
+                        <div class="glass analytics-card">
+                            <h4>Lifecycle Distribution</h4>
+                            <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 15px;">How many products are in each stage of their life.</p>
+                            <div class="chart-container">
+                                <canvas id="lifecycleTrendChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="glass analytics-card">
+                            <h4>Reliability Score</h4>
+                            <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 15px;">Performance efficiency rating by category.</p>
+                            <div class="chart-container">
+                                <canvas id="categoryHealthChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <!-- Product Health Breakdown -->
+                        <div class="glass analytics-card" style="grid-column: span 2;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <div>
+                                    <h4>Inventory Reliability Audit</h4>
+                                    <p style="color: var(--text-muted); font-size: 0.8rem;">Detailed health assessment for every product.</p>
+                                </div>
+                                <div style="display: flex; gap: 10px;">
+                                    <span class="badge badge-success" style="font-size: 0.65rem;">Good (>70%)</span>
+                                    <span class="badge badge-maintenance" style="font-size: 0.65rem;">Fair (40-70%)</span>
+                                    <span class="badge badge-critical" style="font-size: 0.65rem;">Critical (<40%)</span>
+                                </div>
+                            </div>
+                            <div class="health-table-container">
+                                <table class="health-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Category</th>
+                                            <th>Risk Level</th>
+                                            <th>Health Score</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="product-health-body">
+                                        <!-- Dynamic rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="glass analytics-card" style="grid-column: span 2;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <div>
+                                    <h4 style="font-size: 1.25rem;">Upcoming Maintenance & Risk Forecast</h4>
+                                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">
+                                        This chart shows when your products may require maintenance based on usage, age, and predicted wear over time.
+                                    </p>
+                                </div>
+                                <div class="forecast-legend">
+                                    <span class="legend-item"><span class="dot normal"></span> Normal</span>
+                                    <span class="legend-item"><span class="dot warning"></span> Maintenance</span>
+                                    <span class="legend-item"><span class="dot danger"></span> Critical</span>
+                                </div>
+                            </div>
+                            
+                            <div class="forecast-layout">
+                                <div class="chart-main">
+                                    <div class="chart-container" style="height: 300px;">
+                                        <canvas id="projectionChart"></canvas>
+                                    </div>
+                                    
+                                    <!-- AI Explanation Panel -->
+                                    <div class="ai-forecast-explanation glass" id="ai-forecast-panel">
+                                        <div class="explanation-header">
+                                            <i class="fas fa-brain"></i>
+                                            <span>Why this prediction?</span>
+                                        </div>
+                                        <div id="ai-explanation-content" class="explanation-content">
+                                            Analyzing your inventory patterns to provide detailed insights...
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="roadmap-timeline-wrapper">
+                                    <div class="roadmap-timeline" id="maintenance-roadmap">
+                                        <!-- Dynamic roadmap items -->
+                                        <div class="empty-roadmap">
+                                            <i class="fas fa-calendar-check"></i>
+                                            <p>Calculating your 6-month forecast...</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="analytics-empty-state" style="display: none;"></div>
+            </div>
+
+            <!-- Notifications View -->
+            <div id="notifications-view" class="view-section" style="display: none;">
+                <header class="header">
+                    <div>
+                        <h2 style="font-size: 2rem; letter-spacing: -0.5px;">Security & Updates</h2>
+                        <p style="color: var(--text-muted); font-size: 0.95rem;">Stay informed about your product health and account security.</p>
+                    </div>
+                    <div style="display: flex; gap: 12px;">
+                        <button class="btn" style="background: rgba(255,255,255,0.05); padding: 10px 20px; width: auto; font-size: 0.9rem;" id="mark-all-read">
+                            <i class="fas fa-check-double"></i> Mark All Read
+                        </button>
+                        <button class="btn btn-danger-outline" style="padding: 10px 20px; width: auto; font-size: 0.9rem;" id="clear-all-notifs">
+                            <i class="fas fa-trash-alt"></i> Clear All
+                        </button>
+                    </div>
+                </header>
+
+                <div class="notifications-container">
+                    <div class="notif-filters glass" style="margin-bottom: 30px; padding: 10px; display: flex; gap: 10px; border-radius: 12px;">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="unread">Unread</button>
+                        <button class="filter-btn" data-filter="warranty">Warranty</button>
+                        <button class="filter-btn" data-filter="security">Security</button>
+                        <button class="filter-btn" data-filter="maintenance">Maintenance</button>
+                    </div>
+
+                    <div id="notifications-list" class="notif-list-grid">
+                        <!-- Notifications will be injected here -->
+                        <div class="loading-state" style="text-align: center; padding: 50px; color: var(--text-muted);">
+                            <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 15px; display: block;"></i>
+                            Syncing notifications...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Warranty Wallet View -->
+                <div id="warranty-view" class="view-section" style="display: none;">
+                    <header class="header">
+                        <div>
+                            <h2 style="font-size: 2rem; letter-spacing: -0.5px;">Warranty Wallet</h2>
+                            <p style="color: var(--text-muted); font-size: 0.95rem;">Securely manage and track all your product warranties and invoices.</p>
+                        </div>
+                        <div style="display: flex; gap: 12px;">
+                            <button class="btn btn-primary" style="padding: 10px 24px; width: auto; font-size: 0.9rem;" id="upload-warranty-btn">
+                                <i class="fas fa-file-upload"></i> Upload Document
+                            </button>
+                        </div>
+                    </header>
+
+                    <div class="wallet-filters-container glass" style="margin-bottom: 30px; padding: 20px; border-radius: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap;">
+                            <div class="search-box" style="flex: 1; min-width: 300px; position: relative;">
+                                <i class="fas fa-search" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                                <input type="text" id="warranty-search" placeholder="Search by product name..." style="width: 100%; padding: 12px 12px 12px 45px; border-radius: 12px; border: 1px solid var(--glass-border); outline: none; background: #f8fafc;">
+                            </div>
+                            <div class="filter-group" style="display: flex; gap: 10px;">
+                                <button class="filter-btn active" data-warranty-filter="all">All</button>
+                                <button class="filter-btn" data-warranty-filter="active">Active</button>
+                                <button class="filter-btn" data-warranty-filter="expiring">Expiring Soon</button>
+                                <button class="filter-btn" data-warranty-filter="expired">Expired</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="warranty-list" class="warranty-list-grid">
+                        <!-- Warranty cards will be injected here -->
+                        <div class="loading-state" style="text-align: center; padding: 50px; color: var(--text-muted);">
+                            <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 15px; display: block;"></i>
+                            Syncing your wallet...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content glass">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 id="product-modal-title">Add New Product</h3>
+                <button class="close-modal-btn" id="close-product-modal"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div class="modal-tabs">
+                <button class="modal-tab active" id="manual-tab">Manual Entry</button>
+                <button class="modal-tab" id="scan-tab"><i class="fas fa-barcode"></i> AI Barcode Scan</button>
+            </div>
+
+            <div id="scan-section" style="display: none; text-align: center; margin-bottom: 25px;">
+                <div class="scanner-container glass">
+                    <div id="scanner-view">
+                        <i class="fas fa-camera" style="font-size: 3rem; opacity: 0.2;"></i>
+                        <p style="margin-top: 15px; font-size: 0.9rem;">Initializing AI Vision...</p>
+                    </div>
+                    <div class="scanner-overlay"></div>
+                    <div id="fetching-status" class="fetching-status" style="display: none;">
+                        <i class="fas fa-sync fa-spin"></i>
+                        <span>Fetching real-time product details...</span>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 15px; justify-content: center; margin-bottom: 20px;">
+                    <button class="btn btn-primary" id="start-scan-btn" style="width: auto; padding: 12px 25px;">
+                        <i class="fas fa-expand"></i> Live Scan
+                    </button>
+                    <label class="btn btn-outline" style="width: auto; padding: 12px 25px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-upload"></i> Upload Image
+                        <input type="file" id="barcode-upload" accept="image/*" style="display: none;">
+                    </label>
+                </div>
+
+                <div class="manual-barcode-input glass">
+                    <input type="text" id="manual-barcode" placeholder="Enter barcode number manually">
+                    <button id="manual-barcode-btn">Identify</button>
+                </div>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 15px;">Use live camera, upload a photo, or enter the EAN/UPC barcode manually.</p>
+            </div>
+
+            <form id="product-form">
+                <div id="autofill-badge" class="autofill-badge" style="display: none; margin-bottom: 25px;">
+                    <i class="fas fa-magic"></i> Auto-filled using AI
+                </div>
+
+                <!-- Section: Basic Information -->
+                <div class="form-section-title">Product Basics</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>Product Name</label>
+                        <input type="text" id="prod-name" placeholder="e.g. MacBook Pro, Samsung Fridge" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Brand</label>
+                        <input type="text" id="prod-brand" placeholder="Sony, Apple, etc.">
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <div class="custom-select" id="custom-category-container">
+                            <div class="select-selected"><i class="fas fa-laptop"></i> Electronics</div>
+                            <div class="select-items select-hide">
+                                <div data-value="Electronics" class="same-as-selected"><i class="fas fa-laptop"></i> Electronics</div>
+                                <div data-value="Home Appliances"><i class="fas fa-plug"></i> Home Appliances</div>
+                                <div data-value="Grocery"><i class="fas fa-shopping-basket"></i> Grocery</div>
+                                <div data-value="Vehicles"><i class="fas fa-car"></i> Vehicles</div>
+                                <div data-value="Furniture"><i class="fas fa-couch"></i> Furniture</div>
+                                <div data-value="IT Equipment"><i class="fas fa-server"></i> IT Equipment</div>
+                                <div data-value="Medical"><i class="fas fa-heartbeat"></i> Medical</div>
+                                <div data-value="Other"><i class="fas fa-box"></i> Other</div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="prod-category" value="Electronics">
+                    </div>
+                </div>
+
+                <!-- Section: Usage & Life -->
+                <div class="form-section-title">Lifecycle & Usage</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
+                    <div class="form-group">
+                        <label>Purchase Date</label>
+                        <input type="date" id="prod-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Warranty (Months)</label>
+                        <input type="number" id="prod-warranty" placeholder="e.g. 12 or 24" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Daily Usage (Hours)</label>
+                        <input type="number" id="prod-usage" placeholder="How many hours a day?" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Current Condition</label>
+                        <div class="custom-select" id="custom-condition-container">
+                            <div class="select-selected"><i class="fas fa-star"></i> New</div>
+                            <div class="select-items select-hide">
+                                <div data-value="new" class="same-as-selected"><i class="fas fa-star"></i> New</div>
+                                <div data-value="good"><i class="fas fa-check-circle"></i> Good</div>
+                                <div data-value="moderate"><i class="fas fa-adjust"></i> Moderate</div>
+                                <div data-value="poor"><i class="fas fa-exclamation-triangle"></i> Poor</div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="prod-condition" value="new">
+                    </div>
+                </div>
+
+                <div style="display: flex; gap:15px; margin-top: 30px;">
+                    <button type="submit" class="btn btn-primary btn-block">Add Product</button>
+                    <button type="button" class="btn" id="close-modal" style="background: rgba(255,255,255,0.05);">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Details Modal -->
+    <div id="details-modal" class="modal">
+        <div class="modal-content glass details-glass">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px;">
+                <div>
+                    <h2 id="det-name" style="font-size: 1.8rem; margin-bottom: 5px;">Product Name</h2>
+                    <p id="det-category" style="color: var(--text-muted);">Category</p>
+                </div>
+                <button class="close-modal-btn" id="close-details"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="details-grid">
+                <div class="details-main">
+                    <div class="insight-box glass">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h4 style="color: var(--primary); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">AI Lifecycle Analysis</h4>
+                            <span id="det-provider-badge" class="provider-badge">Powered by AI</span>
+                        </div>
+                        <p id="det-prediction" style="font-size: 1.1rem; line-height: 1.5; margin-bottom: 20px;">Detailed prediction will appear here based on your usage patterns.</p>
+                        
+                        <h5 style="font-size: 0.9rem; margin-bottom: 12px; color: var(--text-main);">Recommended Maintenance</h5>
+                        <ul id="det-tips" class="tips-list">
+                            <!-- Tips will be injected here -->
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="details-side">
+                    <div class="glass" style="padding: 20px; margin-bottom: 20px;">
+                        <span class="label">Health Score</span>
+                        <div id="det-health" class="det-value" style="color: var(--success);">100%</div>
+                    </div>
+                    <div class="glass" style="padding: 20px; margin-bottom: 20px;">
+                        <span class="label">Lifecycle Stage</span>
+                        <div id="det-stage" class="det-value">New</div>
+                    </div>
+                    <div class="glass" style="padding: 20px;">
+                        <span class="label">Warranty Status</span>
+                        <div id="det-warranty" class="det-value">Active</div>
+                    </div>
+                    <div class="glass" style="padding: 20px; margin-top: 20px;">
+                        <span class="label">Failure Probability</span>
+                        <div id="det-failure" class="det-value" style="color: var(--warning);">0%</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="det-warranty-section" style="display: none; margin-top: 20px; padding: 15px 20px; background: rgba(59, 130, 246, 0.05); border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <i class="fas fa-file-contract" style="color: var(--primary);"></i>
+                        <span style="font-weight: 500; font-size: 0.9rem;">Digital Warranty Secured</span>
+                    </div>
+                    <button class="btn btn-outline-small" id="det-view-warranty-btn" style="padding: 5px 12px; font-size: 0.8rem; width: auto;">
+                        <i class="fas fa-eye"></i> View Card
+                    </button>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-top: 30px; padding-top: 25px; border-top: 1px solid var(--glass-border);">
+                <button class="btn btn-primary" style="flex: 1;" id="det-edit-btn"><i class="fas fa-edit"></i> Edit Product</button>
+                <button class="btn btn-danger-outline" style="flex: 1;" id="det-delete-btn"><i class="fas fa-trash-alt"></i> Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content glass" style="max-width: 420px; text-align: center; border-radius: 24px;">
+            <div id="confirm-icon-wrapper" style="width: 70px; height: 70px; border-radius: 50%; background: rgba(59, 130, 246, 0.1); color: var(--primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 25px; font-size: 1.8rem;">
+                <i id="confirm-icon" class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 id="confirm-title" style="font-size: 1.5rem; margin-bottom: 12px; letter-spacing: -0.5px;">Are you sure?</h3>
+            <p id="confirm-msg" style="color: var(--text-muted); line-height: 1.6; margin-bottom: 35px; font-size: 0.95rem;">This action cannot be undone.</p>
+            <div style="display: flex; gap: 15px;">
+                <button class="btn" id="confirm-cancel" style="background: rgba(255,255,255,0.05); flex: 1; border-radius: 12px; font-weight: 500;">Cancel</button>
+                <button class="btn btn-primary" id="confirm-ok" style="flex: 1; border-radius: 12px; font-weight: 600;">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div id="feedback-modal" class="modal">
+        <div class="modal-content glass" style="max-width: 500px; border-radius: 24px; padding: 40px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <h3 style="font-size: 1.6rem; letter-spacing: -0.5px;">Share Experience</h3>
+                <button class="close-modal-btn" onclick="document.getElementById('feedback-modal').style.display='none'"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <form id="feedback-form">
+                <div class="form-group">
+                    <label>How would you rate LifeSync?</label>
+                    <div class="star-rating" id="feedback-stars">
+                        <i class="fas fa-star" data-rating="1"></i>
+                        <i class="fas fa-star" data-rating="2"></i>
+                        <i class="fas fa-star" data-rating="3"></i>
+                        <i class="fas fa-star" data-rating="4"></i>
+                        <i class="fas fa-star" data-rating="5"></i>
+                    </div>
+                    <input type="hidden" id="fb-rating" value="0">
+                </div>
+
+                <div class="form-group">
+                    <label>Category</label>
+                    <div class="custom-select" id="fb-category-container">
+                        <div class="select-selected">Select Category</div>
+                        <div class="select-items select-hide">
+                            <div data-value="bug">Bug Report</div>
+                            <div data-value="feature">Feature Request</div>
+                            <div data-value="ui">UI/UX Suggestion</div>
+                            <div data-value="performance">Performance Issue</div>
+                            <div data-value="security">Security Concern</div>
+                            <div data-value="inquiry">General Inquiry</div>
+                            <div data-value="other">Other</div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="fb-category" value="">
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="fb-message" rows="4" placeholder="Your experience helps us grow..." required style="width: 100%; padding: 15px; background: #ffffff; border: 1px solid var(--glass-border); border-radius: 12px; color: var(--text-main); outline: none; resize: none; font-size: 0.95rem;"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block" id="submit-feedback" style="margin-top: 20px; padding: 16px; font-weight: 600; border-radius: 14px;">
+                    Send Feedback
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+
+
+    <!-- Chat Modal -->
+    <div id="chat-modal" class="modal">
+        <div class="modal-content glass chat-modal-content">
+            <div class="chat-modal-header">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div class="chat-avatar-large">
+                        <div class="ls-ai-logo large">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="ai-grad-static-2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="var(--primary)" />
+                                        <stop offset="100%" stop-color="var(--accent)" />
+                                    </linearGradient>
+                                </defs>
+                                <!-- Maximum Spacing Ellipse -->
+                                <path d="M3 9C3 6 7 4 12 4C17 4 21 6 21 9" stroke="url(#ai-grad-static-2)" stroke-width="2.2" stroke-linecap="round"/>
+                                <path d="M18 8L21 11L24 8Z" fill="url(#ai-grad-static-2)" />
+                                
+                                <path d="M21 15C21 18 17 20 12 20C7 20 3 18 3 15" stroke="url(#ai-grad-static-2)" stroke-width="2.2" stroke-linecap="round"/>
+                                <path d="M6 16L3 13L0 16Z" fill="url(#ai-grad-static-2)" />
+
+                                <circle cx="12" cy="12" r="1.2" class="ai-core" fill="url(#ai-grad-static-2)">
+                                    <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite" />
+                                    <animate attributeName="r" values="1;1.5;1" dur="2s" repeatCount="indefinite" />
+                                </circle>
+                            </svg>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 1.4rem; letter-spacing: -0.5px;">LifeSync AI Assistant</h3>
+                        <div style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--success);">
+                            <span class="status-dot active" style="width: 6px; height: 6px;"></span>
+                            <span>Online & Ready to Help</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="close-modal-btn" id="close-chat-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="chat-modal-body" id="chat-messages">
+                <div class="message msg-ai">
+                    <div class="msg-content">
+                        Hello! I am your LifeSync Assistant. I can help you diagnose product issues, plan maintenance, or analyze your inventory health. What's on your mind?
+                    </div>
+                    <div class="msg-time">Just now</div>
+                </div>
+            </div>
+
+            <div class="chat-modal-footer">
+                <div class="suggested-questions" id="chat-suggestions">
+                    <!-- Suggestions injected here -->
+                </div>
+                <form id="chat-form" class="chat-input-large">
+                    <button type="button" class="btn-voice-large" id="voice-btn">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <input type="text" id="chat-msg" placeholder="Type your inquiry here..." autocomplete="off">
+                    <button type="submit" class="btn-send-large">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Full Inventory Modal -->
+    <div id="full-inventory-modal" class="modal inventory-modal">
+        <div class="modal-content glass inventory-modal-content">
+            <div class="inventory-modal-header">
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <button class="btn-icon" onclick="document.getElementById('full-inventory-modal').style.display='none'">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div>
+                        <h2 style="font-size: 2.2rem; letter-spacing: -1px;">All Products</h2>
+                        <p style="color: var(--text-muted); font-size: 1rem;">Browse and manage your entire inventory.</p>
+                    </div>
+                </div>
+                <button class="close-modal-btn" onclick="document.getElementById('full-inventory-modal').style.display='none'">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="inventory-modal-body">
+                <div class="products-grid" id="full-products-list">
+                    <!-- All product cards rendered here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Simulation Control Panel (Hidden by default) -->
+    <div id="simulation-panel" class="simulation-panel glass" style="display: none;">
+        <div class="sim-header">
+            <i class="fas fa-clock"></i>
+            <span>Time Simulation</span>
+            <button id="close-sim-panel" class="btn-icon-small"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="sim-body">
+            <div class="sim-current-time">
+                <label>Virtual Time:</label>
+                <div id="sim-clock">2026-04-23 20:46</div>
+            </div>
+            <div class="sim-controls">
+                <button class="btn btn-outline-small" onclick="simulateTime(30)">+1 Month</button>
+                <button class="btn btn-outline-small" onclick="simulateTime(365)">+1 Year</button>
+                <button class="btn btn-danger-small" onclick="simulateTime(0, true)">Reset</button>
+            </div>
+            <p class="sim-hint">Recalculating lifecycle stages based on future date...</p>
+        </div>
+    </div>
+
+    <!-- Floating Chat Trigger -->
+    <div class="floating-chat-trigger" onclick="document.getElementById('chat-modal').style.display='flex'">
+        <div class="chat-badge" id="chat-notif-badge" style="background: var(--danger); color: white;">1</div>
+        <i class="fas fa-comment-dots"></i>
+    </div>
+
+    <!-- Warranty Upload Modal -->
+    <div id="warranty-modal" class="modal">
+        <div class="modal-content glass" style="max-width: 550px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <h3>Upload Warranty Document</h3>
+                <button class="close-modal-btn" id="close-warranty-modal"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <form id="warranty-upload-form">
+                <div class="form-group">
+                    <label>Link to Product</label>
+                    <div class="custom-select" id="warranty-product-select-container">
+                        <div class="select-selected">Select Product</div>
+                        <div class="select-items select-hide" id="warranty-product-options">
+                            <!-- Product options injected here -->
+                        </div>
+                    </div>
+                    <input type="hidden" id="warranty-product-id" required>
+                </div>
+
+                <div class="form-group" style="margin-top: 20px;">
+                    <label>Document Type</label>
+                    <div class="custom-select" id="warranty-type-select-container">
+                        <div class="select-selected">Warranty Card</div>
+                        <div class="select-items select-hide">
+                            <div data-value="warranty" class="same-as-selected">Warranty Card</div>
+                            <div data-value="bill">Invoice / Bill</div>
+                            <div data-value="manual">Product Manual</div>
+                            <div data-value="other">Other</div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="warranty-upload-type" value="warranty">
+                </div>
+
+                <div class="form-group" style="margin-top: 25px;">
+                    <label>Select File (PDF or Image)</label>
+                    <div class="file-drop-zone" id="document-drop-zone" style="border: 2px dashed var(--glass-border); border-radius: 12px; padding: 40px; text-align: center; cursor: pointer; transition: var(--transition);">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 2.5rem; color: var(--primary); opacity: 0.5; margin-bottom: 15px; display: block;"></i>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">Drag & drop or click to upload</p>
+                        <div id="warranty-file-info" style="display: none; align-items: center; justify-content: center; gap: 10px; margin-top: 15px;">
+                            <span id="selected-file-name" style="color: var(--primary); font-weight: 500; word-break: break-all; font-size: 0.9rem;"></span>
+                            <button type="button" id="clear-warranty-file" style="background: rgba(239, 68, 68, 0.1); border: none; color: var(--danger); cursor: pointer; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem;"><i class="fas fa-times"></i> Remove</button>
+                        </div>
+                        <input type="file" id="warranty-file-input" accept=".pdf,image/*" style="display: none;" required>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 15px; margin-top: 35px;">
+                    <button type="submit" class="btn btn-primary btn-block" id="submit-warranty-upload">Start Upload</button>
+                    <button type="button" class="btn btn-block" id="cancel-warranty-upload" style="background: rgba(0,0,0,0.05); color: var(--text-main);">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Document Preview Modal -->
+    <div id="preview-modal" class="modal">
+        <div class="modal-content glass" style="max-width: 900px; height: 85vh; padding: 0; display: flex; flex-direction: column;">
+            <div style="padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border);">
+                <h3 id="preview-title">Document Preview</h3>
+                <div style="display: flex; gap: 15px;">
+                    <a id="download-doc-btn" href="#" download class="btn-icon" title="Download"><i class="fas fa-download"></i></a>
+                    <button class="close-modal-btn" id="close-preview-modal"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+            <div id="preview-body" style="flex: 1; background: #f1f5f9; position: relative; overflow: hidden;">
+                <!-- Content injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Modal (Hidden by default) -->
+    <div id="auth-modal" class="modal">
+        <div class="auth-container" style="max-width: 450px;">
+            <!-- Login Card -->
+            <div id="login-card" class="auth-card glass">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <div class="logo"><i class="fas fa-sync-alt"></i> LifeSync AI</div>
+                </div>
+                <h2>Welcome Back</h2>
+                <p style="color: var(--text-muted); margin-bottom: 30px;">Sign in to access your inventory</p>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="login-email" placeholder="name@company.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="login-password" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Sign In <i class="fas fa-arrow-right"></i></button>
+                </form>
+                <p style="margin-top: 25px; font-size: 0.9rem; color: var(--text-muted);">
+                    Don't have an account? <a href="#" id="show-register" style="color: var(--primary); text-decoration: none;">Create one</a>
+                </p>
+            </div>
+
+            <!-- Register Card -->
+            <div id="register-card" class="auth-card glass" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <div class="logo"><i class="fas fa-sync-alt"></i> LifeSync AI</div>
+                </div>
+                <h2>Create Account</h2>
+                <p style="color: var(--text-muted); margin-bottom: 30px;">Start your intelligent product tracking</p>
+                <form id="register-form">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="reg-name" placeholder="John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="reg-email" placeholder="name@company.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="reg-password" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Get Started <i class="fas fa-user-plus"></i></button>
+                </form>
+                <p style="margin-top: 25px; font-size: 0.9rem; color: var(--text-muted);">
+                    Already have an account? <a href="#" id="show-login" style="color: var(--primary); text-decoration: none;">Sign in</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2/dist/quagga.min.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

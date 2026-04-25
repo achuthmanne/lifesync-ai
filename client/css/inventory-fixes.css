@@ -1,0 +1,59 @@
+
+/* Dashboard Main Grid Layout */
+.dashboard-main-grid {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 30px;
+    align-items: start;
+}
+
+@media (max-width: 1400px) {
+    .dashboard-main-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Full Inventory View Styling */
+#full-inventory-view {
+    padding: 20px 0;
+    animation: fadeInScale 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInScale {
+    from { opacity: 0; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.all-products-scroller {
+    margin-top: 20px;
+    padding-bottom: 50px;
+}
+
+.btn-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-icon:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: translateX(-3px);
+}
+
+/* Fix for collapsing sections */
+.view-section {
+    width: 100%;
+    min-height: calc(100vh - 200px);
+    display: flex;
+    flex-direction: column;
+}

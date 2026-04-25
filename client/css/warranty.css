@@ -1,0 +1,146 @@
+
+/* --- WARRANTY WALLET STYLES --- */
+
+.warranty-list-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.warranty-card {
+    background: #ffffff;
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 25px;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.warranty-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.warranty-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.warranty-icon-bg {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    color: var(--primary);
+}
+
+.warranty-status-badge {
+    padding: 6px 12px;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-active { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+.status-expiring { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+.status-expired { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
+.warranty-info h3 {
+    font-size: 1.15rem;
+    margin-bottom: 5px;
+    color: var(--text-main);
+}
+
+.warranty-info .category {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.warranty-dates {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f8fafc;
+    border-radius: 12px;
+}
+
+.date-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+}
+
+.date-row:last-child { margin-bottom: 0; }
+
+.date-label { color: var(--text-muted); }
+.date-value { font-weight: 500; color: var(--text-main); }
+
+.warranty-countdown {
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.countdown-active { color: #10b981; }
+.countdown-expiring { color: #f59e0b; }
+.countdown-expired { color: #ef4444; }
+
+.warranty-actions {
+    display: flex;
+    gap: 10px;
+    border-top: 1px solid var(--glass-border);
+    padding-top: 20px;
+}
+
+.warranty-ai-tip {
+    margin-top: 15px;
+    padding: 12px;
+    background: rgba(59, 130, 246, 0.05);
+    border-radius: 10px;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: #1e40af;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.warranty-ai-tip i {
+    color: var(--primary);
+    margin-top: 2px;
+}
+
+.file-drop-zone.dragover {
+    background: rgba(59, 130, 246, 0.05);
+    border-color: var(--primary) !important;
+}
+
+#preview-body iframe, #preview-body img {
+    width: 100%;
+    height: 100%;
+    border: none;
+    object-fit: contain;
+}
+
+@media (max-width: 768px) {
+    .warranty-list-grid {
+        grid-template-columns: 1fr;
+    }
+}
