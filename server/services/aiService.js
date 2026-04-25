@@ -353,13 +353,18 @@ exports.analyzeProduct = async (productId, useHeuristicOnly = false) => {
 exports.chatWithAI = async (userId, userMessage, productId, history = [], currentScreen = 'Dashboard') => {
     try {
         let fullContext = "";
-        const allProducts = await Product.find({ user: userId });
-        
-        if (allProducts.length > 0) {
-            const productSummary = allProducts.map(p => 
-                `- ${p.name}: Health ${p.healthScore}%, Risk ${p.aiInsights.riskLevel}`
-            ).join('\n');
-            fullContext = `User's Current Inventory:\n${productSummary}\n\n`;
+        let isGuest = !userId;
+
+        if (!isGuest) {
+            const allProducts = await Product.find({ user: userId });
+            if (allProducts.length > 0) {
+                const productSummary = allProducts.map(p => 
+                    `- ${p.name}: Health ${p.healthScore}%, Risk ${p.aiInsights.riskLevel}`
+                ).join('\n');
+                fullContext = `User's Current Inventory:\n${productSummary}\n\n`;
+            }
+        } else {
+            fullContext = "GUEST USER: User is exploring the landing page and is NOT logged in yet.";
         }
 
         // Format history for the prompt
@@ -367,49 +372,49 @@ exports.chatWithAI = async (userId, userMessage, productId, history = [], curren
 
         const systemPrompt = `STRICT ROLE & KNOWLEDGE:
         - You are the LifeSync AI Assistant, an expert in product lifecycle management and the LifeSync platform.
-        - YOUR KNOWLEDGE BASE (LIFESYNC PLATFORM):
-            * DASHBOARD: View total products, active warranties, and high-risk items. 
-            * ADD PRODUCT: Use "AI Barcode Scan" (Camera/Upload) for automatic identification or "Manual Entry".
-            * ANALYTICS: Detailed diagnostics, lifecycle distribution charts, and maintenance forecasts.
-            * WARRANTY WALLET: Secure digital vault for PDF/Image warranties and bills.
-            * NOTIFICATIONS: Real-time alerts for maintenance, security, and warranty expiry.
-            * TIME SIMULATION: A developer tool to see how products age in the future.
-            * AI CHAT: (This screen) provides cross-platform support and diagnostics.
-        - OFF-TOPIC RULE: If a user asks a question UNRELATED to their products or the LifeSync website, politely redirect them back to LifeSync topics. Do not answer general trivia or unnecessary questions.
-        
+        - YOUR GOAL: Help users understand how LifeSync AI works and persuade them to sign up if they haven't already.
+
+        - LANDING PAGE KNOWLEDGE BASE:
+            * WHAT IS LIFESYNC: An AI-powered platform to track, manage, and extend the life of your physical products.
+            * DASHBOARD: A premium interface to monitor total products, active warranties, and high-risk items. 
+            * ADD PRODUCT: Advanced "AI Barcode Scan" that uses computer vision to identify products in seconds. Also supports manual entry.
+            * ANALYTICS: Deep diagnostics using multi-engine AI, risk distribution charts, and predictive maintenance forecasts.
+            * WARRANTY WALLET: A secure, encrypted digital vault for PDF/Image warranties, bills, and manuals.
+            * NOTIFICATIONS: Proactive alerts for maintenance, security risks, and warranty expiry.
+            * TIME SIMULATION: A unique developer tool allowing users to "warp" into the future to see how products will age.
+            * AI CHAT: Cross-platform assistant (this chat) for troubleshooting and inventory insights.
+            * AUTHENTICATION: Beautifully designed login/signup page with a dynamic "AI Molecule Physics" background.
+
+        - GUEST ACCESS RULES (CRITICAL):
+            * User is CURRENTLY A GUEST. They cannot see their own products yet.
+            * If they ask about THEIR specific products, say: "As you are currently a guest, I cannot see your personal inventory. Please Login or Create an Account first so I can provide personalized insights for your products!"
+            * For any question NOT related to LifeSync features or the landing page, politely state: "I am specialized in LifeSync platform details. For other queries, please join our community by signing up!"
+
         STRICT CONTEXT:
         - User's Current Screen: ${currentScreen}
+        - User Status: ${isGuest ? 'Guest (Landing Page)' : 'Authenticated User'}
         - Inventory Context: ${fullContext}
-        - Disclaimer (Mandatory): Always include "This analysis is an estimate based on usage patterns and provided inputs." when giving health predictions.
+        - Disclaimer (Mandatory for health/risk): Always include "This analysis is an estimate based on usage patterns and provided inputs."
 
         STRICT LANGUAGE RULES:
-        1. DEFAULT LANGUAGE: Use English for all responses UNLESS the user specifically communicates in or requests a regional language (Hindi, Telugu, etc.).
-        2. NATIVE SCRIPT: When a regional language is requested, respond ONLY in that native script (Devanagari, Telugu script, etc.).
-        3. NO MIXING: Do not mix languages. If it's English, keep it pure English. If it's Hindi, keep it pure Hindi.
+        1. DEFAULT LANGUAGE: Use English UNLESS requested otherwise.
+        2. NATIVE SCRIPT: Respond in native script for regional languages.
         
         SUGGESTION CHIPS (MANDATORY):
-        - At the VERY end of EVERY response, you MUST provide exactly 3 relevant follow-up questions.
-        - These questions must be in the same language as your response.
-        - YOU MUST ALWAYS USE THE ENGLISH WORD [SUGGESTIONS: AS THE MARKER.
-        - FORMAT EXAMPLE (Hindi): [SUGGESTIONS: मेरा बैटरी कैसा है? | मुझे सेवा कब लेनी चाहिए? | और विवरण दिखाएं]
-        - YOU MUST USE THE | CHARACTER TO SEPARATE THE 3 QUESTIONS.
-        
+        - Provide exactly 3 relevant follow-up questions at the end.
+        - Mark with [SUGGESTIONS: question1 | question2 | question3]
+
         OUTPUT FORMAT:
-        - Plain text ONLY. NO markdown, stars (**), or hashtags (#).`;
+        - Plain text ONLY. NO markdown or formatting.`;
 
         const userPrompt = `
             Inventory Context: ${fullContext}
             Conversation History: ${historyText}
-
             User Message: ${userMessage}
-            
-            Assistant (Expert Diagnostic Response):`;
+            Assistant Response:`;
         
         const { data, provider } = await callAIWithFallback({ system: systemPrompt, user: userPrompt }, userId, productId, false);
-        
-        // Clean text and handle suggestions
         const cleanText = data.replace(/\*\*/g, '').replace(/#/g, '');
-        
         return { text: cleanText, provider: provider };
     } catch (error) {
         console.error('AI Chat Error:', error);

@@ -1,4 +1,11 @@
 document.addEventListener('DOMContentLoaded', async () => {
+    let appTime = new Date();
+
+    const syncAppTime = (time) => {
+        if (!time) return;
+        appTime = new Date(time);
+        console.log('[TimeSync] Application time synced to:', appTime.toISOString());
+    };
     // --- LOGO HELPERS ---
     window.getAILogo = (size = '') => {
         const id = 'ai-grad-' + Math.random().toString(36).substr(2, 9);
@@ -83,6 +90,122 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    // Global Elements (Needed for both Landing and App)
+    const chatForm = document.getElementById('chat-form');
+    const chatMessages = document.getElementById('chat-messages');
+    const chatInput = document.getElementById('chat-msg');
+    const chatModal = document.getElementById('chat-modal');
+    const closeChatBtn = document.getElementById('close-chat-modal');
+    const voiceBtn = document.getElementById('voice-btn');
+
+    let chatHistory = []; 
+    let currentActiveView = 'Landing Page';
+
+    // Shared Chat Handlers (Hoisted)
+    function initChatHandlers() {
+        if (!chatForm) return;
+        chatForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const msg = chatInput.value.trim();
+            if (!msg) return;
+
+            appendMessage('user', msg);
+            chatInput.value = '';
+
+            const typingId = 'typing-' + Date.now();
+            const typingDiv = document.createElement('div');
+            typingDiv.id = typingId;
+            typingDiv.className = 'message msg-ai typing-msg';
+            typingDiv.innerHTML = `<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            try {
+                const res = await api.ai.chat(msg, null, chatHistory, currentActiveView);
+                const typingEl = document.getElementById(typingId);
+                if (typingEl) typingEl.remove();
+                
+                let aiText = res.data.text;
+                let provider = res.data.provider;
+                let suggestions = [];
+
+                const suggestRegex = /\[?\s*SUGGESTIONS:\s*(.*?)\]?\s*$/i;
+                const suggestMatch = aiText.match(suggestRegex);
+                if (suggestMatch) {
+                    const content = suggestMatch[1];
+                    let rawSuggestions = content.includes('|') ? content.split('|') : (content.includes(',') ? content.split(',') : content.split(/(?<=\?)/));
+                    suggestions = rawSuggestions.map(s => s.trim()).filter(s => s.length > 5).slice(0, 3);
+                    aiText = aiText.replace(suggestMatch[0], '').trim();
+                }
+
+                typeMessage('ai', aiText, provider);
+
+                if (suggestions.length > 0) {
+                    renderDynamicSuggestions(suggestions);
+                } else {
+                    if (localStorage.getItem('token')) {
+                        try {
+                            const inventoryRes = await api.products.getAll();
+                            refreshChatSuggestions(inventoryRes.data);
+                        } catch (e) { refreshChatSuggestions([]); }
+                    } else { refreshChatSuggestions([]); }
+                }
+
+                chatHistory.push({ role: 'user', content: msg });
+                chatHistory.push({ role: 'assistant', content: aiText });
+                if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
+            } catch (error) {
+                console.error('Chat Error:', error);
+                const typingEl = document.getElementById(typingId);
+                if (typingEl) typingEl.remove();
+                appendMessage('ai', 'I apologize, but I encountered an error. Please try again.');
+            }
+        };
+    }
+
+    // Voice recognition logic
+    if (voiceBtn) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            const recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.lang = 'en-US';
+            recognition.interimResults = false;
+
+            voiceBtn.onclick = () => {
+                if (voiceBtn.classList.contains('recording')) {
+                    recognition.stop();
+                } else {
+                    recognition.start();
+                    voiceBtn.classList.add('recording');
+                    showNotification('Listening...', 'info');
+                }
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                chatInput.value = transcript;
+                voiceBtn.classList.remove('recording');
+                if (transcript.length > 5) chatForm.dispatchEvent(new Event('submit'));
+            };
+
+            recognition.onerror = () => {
+                voiceBtn.classList.remove('recording');
+                showNotification('Voice recognition failed', 'error');
+            };
+
+            recognition.onend = () => voiceBtn.classList.remove('recording');
+        } else {
+            voiceBtn.style.display = 'none';
+        }
+    }
+
+    // Close Button & Background Click
+    if (closeChatBtn) closeChatBtn.onclick = closeChat;
+    window.addEventListener('click', (event) => {
+        if (event.target == chatModal) closeChat();
+    });
+
     // Auth Check
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user'));
@@ -93,11 +216,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!token || !user) {
         if (appView) appView.style.display = 'none';
         if (landingView) landingView.style.display = 'block';
-        if (authModal) {
-            authModal.classList.add('full-page-auth');
-        }
+        if (authModal) authModal.classList.add('full-page-auth');
+        initChatHandlers();
         return;
     }
+
+    currentActiveView = 'Dashboard';
 
     if (landingView) landingView.style.display = 'none';
     if (appView) appView.style.display = 'block';
@@ -126,10 +250,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     let editingProductId = null;
 
-    // Chat Elements (Embedded)
-    const chatForm = document.getElementById('chat-form');
-    const chatMessages = document.getElementById('chat-messages');
-    const chatInput = document.getElementById('chat-msg');
+    // App UI Elements
  
     const navDashboard = document.getElementById('nav-dashboard');
     const navAnalytics = document.getElementById('nav-analytics');
@@ -144,10 +265,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     let currentViewedProductId = null;
     let analyticsCharts = {};
-    let chatHistory = []; 
     let allNotifications = [];
     let currentNotifFilter = 'all';
-    let currentActiveView = 'Dashboard';
 
     // Init UI
     userNameDisplay.textContent = user.name;
@@ -463,7 +582,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             if (res.success) {
                 console.log('[Simulation] Time shift success:', res.data);
-                updateSimClock(new Date(res.data.currentTime));
+                syncAppTime(res.data.currentTime);
+                updateSimClock(appTime);
                 showNotification(reset ? 'Simulation reset' : `Time shifted +${days} days`, 'success');
                 await loadDashboard(); // Refresh UI
             }
@@ -494,7 +614,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (user.isAdmin && isDebug) {
         simPanel.style.display = 'block';
-        updateSimClock(new Date()); // Initial (will be updated by sync if needed)
+        updateSimClock(appTime); // Initial
     }
 
     if (closeSimBtn) {
@@ -629,6 +749,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const response = await api.products.getAll();
             const products = response.data;
+            syncAppTime(response.currentTime);
+            updateSimClock(appTime);
 
             // Update Stats
             document.getElementById('total-count').textContent = products.length;
@@ -637,7 +759,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const purchaseDate = new Date(p.purchaseDate);
                 const expiryDate = new Date(purchaseDate);
                 expiryDate.setMonth(expiryDate.getMonth() + p.warrantyMonths);
-                return expiryDate > new Date();
+                return expiryDate > appTime;
             }).length;
             document.getElementById('warranty-count').textContent = products.length > 0 ? activeWarrantyCount : '--';
 
@@ -1170,50 +1292,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     // Chat Logic handled by global listeners initialized above
-    // Voice Recognition Logic
-    const voiceBtn = document.getElementById('voice-btn');
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    // Voice Recognition logic moved to top for shared access
 
-    if (SpeechRecognition) {
-        const recognition = new SpeechRecognition();
-        recognition.continuous = false;
-        recognition.lang = 'en-US';
-        recognition.interimResults = false;
-
-        voiceBtn.onclick = () => {
-            if (voiceBtn.classList.contains('recording')) {
-                recognition.stop();
-            } else {
-                recognition.start();
-                voiceBtn.classList.add('recording');
-                showNotification('Listening...', 'info');
-            }
-        };
-
-        recognition.onresult = (event) => {
-            const transcript = event.results[0][0].transcript;
-            chatInput.value = transcript;
-            voiceBtn.classList.remove('recording');
-            // Auto-submit if transcript is clear
-            if (transcript.length > 5) {
-                chatForm.dispatchEvent(new Event('submit'));
-            }
-        };
-
-        recognition.onerror = () => {
-            voiceBtn.classList.remove('recording');
-            showNotification('Voice recognition failed', 'error');
-        };
-
-        recognition.onend = () => {
-            voiceBtn.classList.remove('recording');
-        };
-    } else {
-        voiceBtn.style.display = 'none';
-    }
-
-    chatForm.onsubmit = async (e) => {
-        e.preventDefault();
+    function initChatHandlers() {
+        if (!chatForm) return;
+        
+        chatForm.onsubmit = async (e) => {
+            e.preventDefault();
         const msg = chatInput.value.trim();
         if (!msg) return;
 
@@ -1274,8 +1359,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                 renderDynamicSuggestions(suggestions);
             } else {
                 // If AI fails to provide suggestions, generate some based on inventory
-                const inventoryRes = await api.products.getAll();
-                refreshChatSuggestions(inventoryRes.data);
+                if (localStorage.getItem('token')) {
+                    try {
+                        const inventoryRes = await api.products.getAll();
+                        refreshChatSuggestions(inventoryRes.data);
+                    } catch (e) {
+                        refreshChatSuggestions([]);
+                    }
+                } else {
+                    refreshChatSuggestions([]);
+                }
             }
 
 
@@ -1291,9 +1384,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             appendMessage('ai', 'I apologize, but I encountered an error. Please try again.');
         }
     };
+    }
 
     // Dynamic Suggestions Logic
-    const refreshChatSuggestions = (products) => {
+    function refreshChatSuggestions(products) {
         const suggestBox = document.getElementById('chat-suggestions');
         if (!suggestBox) return;
 
@@ -1322,9 +1416,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Limit to 3 and render
         renderDynamicSuggestions(suggestions.slice(0, 3));
-    };
+    }
 
-    const renderDynamicSuggestions = (questions) => {
+    function renderDynamicSuggestions(questions) {
         const suggestBox = document.getElementById('chat-suggestions');
         if (!suggestBox || questions.length === 0) return;
 
@@ -1340,7 +1434,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 chatForm.dispatchEvent(new Event('submit'));
             };
         });
-    };
+    }
     window.speakText = (text) => {
         if (!window.speechSynthesis) {
             showNotification('Speech synthesis not supported', 'warning');
@@ -1392,7 +1486,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.speechSynthesis.speak(utterance);
     };
 
-    const appendMessage = (sender, text, provider = null) => {
+    function appendMessage(sender, text, provider = null) {
         const div = document.createElement('div');
         div.className = `message msg-${sender}`;
         
@@ -1426,9 +1520,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         chatMessages.appendChild(div);
         chatMessages.scrollTop = chatMessages.scrollHeight;
         return div;
-    };
+    }
 
-    const typeMessage = (sender, text, provider = null) => {
+    function typeMessage(sender, text, provider = null) {
         const messageDiv = appendMessage(sender, '', provider);
         const textContainer = messageDiv.querySelector('.msg-text');
         let i = 0;
@@ -1447,7 +1541,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
         
         typeChar();
-    };
+    }
 
     // Event Delegation for Speaker Buttons (more robust than onclick)
     chatMessages.addEventListener('click', (e) => {
@@ -1459,15 +1553,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // Chat Modal Controls (with speech cancellation)
-    const chatModal = document.getElementById('chat-modal');
-    const closeChatBtn = document.getElementById('close-chat-modal');
     
-    const closeChat = () => {
-        chatModal.style.display = 'none';
+    function closeChat() {
+        if (chatModal) chatModal.style.display = 'none';
         if (window.speechSynthesis) {
             window.speechSynthesis.cancel();
         }
-    };
+    }
 
     window.openAIChat = (query = '') => {
         chatModal.style.display = 'flex';
@@ -1486,8 +1578,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
     
     if (closeChatBtn) closeChatBtn.onclick = closeChat;
-    
+
     // Close on background click
+    window.onclick = (event) => {
+        if (event.target == chatModal) closeChat();
+    };
+
+    // Initialize handlers at the end to ensure all functions are defined
+    initChatHandlers();
     chatModal.onclick = (e) => {
         if (e.target === chatModal) closeChat();
     };
@@ -2177,7 +2275,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function formatTime(dateStr) {
         const date = new Date(dateStr);
-        const now = new Date();
+        const now = appTime;
         const diff = (now - date) / 1000;
 
         if (diff < 60) return 'Just now';
@@ -2318,7 +2416,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // Apply Status Filter
-        const now = new Date();
+        const now = appTime;
         if (currentWarrantyFilter !== 'all') {
             filtered = filtered.filter(w => {
                 const product = products.find(p => p._id === w.productId);
@@ -2352,8 +2450,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const renderWarrantyCard = (warranty, product) => {
         if (!product) return '';
-
-        const now = new Date();
+        const now = appTime;
         const purchaseDate = new Date(product.purchaseDate);
         const expiryDate = new Date(purchaseDate);
         expiryDate.setMonth(expiryDate.getMonth() + product.warrantyMonths);

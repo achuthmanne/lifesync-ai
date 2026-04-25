@@ -2,6 +2,7 @@ const Product = require('../models/Product');
 const aiService = require('../services/aiService');
 const notificationService = require('../services/notificationService');
 const monitoringService = require('../services/monitoringService');
+const timeService = require('../services/timeService');
 
 // @desc    Get all products
 // @route   GET /api/products
@@ -10,7 +11,12 @@ exports.getProducts = async (req, res) => {
     try {
         const products = await Product.find({ user: req.user.id });
         const enrichedProducts = products.map(p => monitoringService.enrichProductData(p));
-        res.status(200).json({ success: true, count: products.length, data: enrichedProducts });
+        res.status(200).json({ 
+            success: true, 
+            count: products.length, 
+            data: enrichedProducts,
+            currentTime: timeService.getCurrentTime()
+        });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -25,7 +31,11 @@ exports.getProduct = async (req, res) => {
         if (!product) {
             return res.status(404).json({ success: false, message: 'Product not found' });
         }
-        res.status(200).json({ success: true, data: monitoringService.enrichProductData(product) });
+        res.status(200).json({ 
+            success: true, 
+            data: monitoringService.enrichProductData(product),
+            currentTime: timeService.getCurrentTime()
+        });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }

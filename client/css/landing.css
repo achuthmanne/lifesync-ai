@@ -57,7 +57,7 @@
 
 .hero-content h1 {
     font-size: 4rem;
-    line-height: 1.1;
+    line-height: 1.25;
     margin-bottom: 25px;
     letter-spacing: -2px;
     background: linear-gradient(135deg, var(--text-main) 0%, #475569 100%);

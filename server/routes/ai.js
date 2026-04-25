@@ -4,12 +4,28 @@ const { chatWithAI } = require('../services/aiService');
 
 const router = express.Router();
 
-router.post('/chat', protect, async (req, res) => {
+router.post('/chat', async (req, res) => {
     try {
         const { message, productId, history, currentScreen } = req.body;
-        const response = await chatWithAI(req.user.id, message, productId, history, currentScreen);
+        
+        // Extract user from token if available, but don't block if not
+        let userId = null;
+        const authHeader = req.headers.authorization;
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+            const token = authHeader.split(' ')[1];
+            try {
+                const jwt = require('jsonwebtoken');
+                const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                userId = decoded.id;
+            } catch (e) {
+                console.warn('Invalid token in AI chat, continuing as guest');
+            }
+        }
+
+        const response = await chatWithAI(userId, message, productId, history, currentScreen);
         res.status(200).json({ success: true, data: response });
     } catch (error) {
+        console.error('AI Chat Route Error:', error);
         res.status(500).json({ success: false, message: error.message });
     }
 });
