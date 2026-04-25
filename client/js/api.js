@@ -86,7 +86,7 @@ const api = {
     },
 
     ai: {
-        chat: (message, productId = null, history = []) => api.request('/ai/chat', 'POST', { message, productId, history }),
+        chat: (message, productId = null, history = [], currentScreen = 'Dashboard') => api.request('/ai/chat', 'POST', { message, productId, history, currentScreen }),
         getSummary: () => api.request('/ai/summary')
     },
 

@@ -7,13 +7,15 @@ const socketIO = require('../sockets/socketHandler');
 const notificationService = require('../services/notificationService');
 const timeService = require('./timeService');
 
-const genAI = process.env.GEMINI_API_KEY ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY) : null;
-const openai = process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) : null;
-const groq = process.env.GROQ_API_KEY ? new Groq({ apiKey: process.env.GROQ_API_KEY }) : null;
-const cohere = process.env.COHERE_API_KEY ? new CohereClient({ token: process.env.COHERE_API_KEY }) : null;
+// Dynamic Getters for AI Clients (Ensures .env updates are always picked up)
+const getGenAI = () => process.env.GEMINI_API_KEY ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY) : null;
+const getOpenAI = () => process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) : null;
+const getGroq = () => process.env.GROQ_API_KEY ? new Groq({ apiKey: process.env.GROQ_API_KEY }) : null;
+const getCohere = () => process.env.COHERE_API_KEY ? new CohereClient({ token: process.env.COHERE_API_KEY }) : null;
 
 
 async function tryGemini(prompt) {
+    const genAI = getGenAI();
     if (!genAI) throw new Error('Gemini API key not configured');
     
     let finalPrompt = "";
@@ -34,6 +36,7 @@ async function tryGemini(prompt) {
 
 
 async function tryOpenAI(prompt, isJson) {
+    const openai = getOpenAI();
     if (!openai) throw new Error('OpenAI API key not configured');
     
     const messages = [];
@@ -60,6 +63,7 @@ async function tryOpenAI(prompt, isJson) {
 
 
 async function tryGroq(prompt, isJson) {
+    const groq = getGroq();
     if (!groq) throw new Error('Groq API key not configured');
     
     const messages = [];
@@ -86,6 +90,7 @@ async function tryGroq(prompt, isJson) {
 
 
 async function tryCohere(prompt) {
+    const cohere = getCohere();
     if (!cohere) throw new Error('Cohere API key not configured');
     
     let finalPrompt = "";
@@ -106,12 +111,40 @@ async function tryCohere(prompt) {
 }
 
 
+async function tryMock(prompt, isJson) {
+    console.log('Using Mock AI Provider (No API keys found)...');
+    
+    if (isJson) {
+        return JSON.stringify({
+            riskLevel: "Low",
+            failurePrediction: "The product appears to be in good health. This is a mock analysis for development purposes. This analysis is an estimate based on usage patterns and provided inputs.",
+            maintenanceTips: [
+                "Keep the device clean",
+                "Ensure proper ventilation",
+                "Configure real API keys for deep insights"
+            ]
+        });
+    }
+
+    if (typeof prompt === 'object' && prompt.system) {
+        // Simple logic to provide a semi-relevant mock response
+        const userMsg = prompt.user.toLowerCase();
+        if (userMsg.includes('hello') || userMsg.includes('hi')) {
+            return "Hello! I'm the LifeSync AI Assistant (Dev Mode). I see you haven't configured any API keys yet, so I'm here to help you test the interface! [SUGGESTIONS: How do I add keys? | What can you do? | Show me my inventory]";
+        }
+        return "I'm currently running in Development Mode because no API keys were found in your .env file. Once you add a Gemini or OpenAI key, I'll be able to give you deep product insights! [SUGGESTIONS: How to add API keys | Tell me about LifeSync | Check product health]";
+    }
+    return "This is a mock response for testing. Please add API keys to .env to enable real AI analysis.";
+}
+
+
 const callAIWithFallback = async (prompt, userId, productId = null, isJson = true) => {
     const providers = [
         { name: 'Gemini', fn: tryGemini },
         { name: 'Groq', fn: tryGroq },
         { name: 'OpenAI', fn: tryOpenAI },
-        { name: 'Cohere', fn: tryCohere }
+        { name: 'Cohere', fn: tryCohere },
+        { name: 'Mock Engine', fn: tryMock }
     ];
 
     let lastError = null;
@@ -126,8 +159,9 @@ const callAIWithFallback = async (prompt, userId, productId = null, isJson = tru
                 });
             }
 
-            console.log(`Attempting AI analysis with ${provider.name}...`);
+            console.log(`[AI] Attempting ${provider.name}...`);
             let responseText = await provider.fn(prompt, isJson);
+            console.log(`[AI] ${provider.name} responded successfully!`);
             
             if (isJson) {
                 // Robust JSON extraction
@@ -157,12 +191,12 @@ const callAIWithFallback = async (prompt, userId, productId = null, isJson = tru
             }
             return { data: responseText, provider: provider.name };
         } catch (error) {
-            console.error(`${provider.name} failed:`, error.message);
+            console.error(`[AI] ${provider.name} Error:`, error.message);
             if (userId) {
                 socketIO.notifyUser(userId, 'ai_status', { 
                     engine: provider.name, 
                     status: 'failed',
-                    message: `${provider.name} busy. Switching...`,
+                    message: `${provider.name} failed. Trying next...`,
                     productId: productId
                 });
             }
@@ -316,7 +350,7 @@ exports.analyzeProduct = async (productId, useHeuristicOnly = false) => {
     }
 };
 
-exports.chatWithAI = async (userId, userMessage, productId, history = []) => {
+exports.chatWithAI = async (userId, userMessage, productId, history = [], currentScreen = 'Dashboard') => {
     try {
         let fullContext = "";
         const allProducts = await Product.find({ user: userId });
@@ -331,23 +365,37 @@ exports.chatWithAI = async (userId, userMessage, productId, history = []) => {
         // Format history for the prompt
         const historyText = history.map(h => `${h.role === 'user' ? 'User' : 'Assistant'}: ${h.content}`).join('\n');
 
-        const systemPrompt = `You are the LifeSync AI Assistant, a high-end expert in product lifecycle diagnostics and proactive maintenance.
+        const systemPrompt = `STRICT ROLE & KNOWLEDGE:
+        - You are the LifeSync AI Assistant, an expert in product lifecycle management and the LifeSync platform.
+        - YOUR KNOWLEDGE BASE (LIFESYNC PLATFORM):
+            * DASHBOARD: View total products, active warranties, and high-risk items. 
+            * ADD PRODUCT: Use "AI Barcode Scan" (Camera/Upload) for automatic identification or "Manual Entry".
+            * ANALYTICS: Detailed diagnostics, lifecycle distribution charts, and maintenance forecasts.
+            * WARRANTY WALLET: Secure digital vault for PDF/Image warranties and bills.
+            * NOTIFICATIONS: Real-time alerts for maintenance, security, and warranty expiry.
+            * TIME SIMULATION: A developer tool to see how products age in the future.
+            * AI CHAT: (This screen) provides cross-platform support and diagnostics.
+        - OFF-TOPIC RULE: If a user asks a question UNRELATED to their products or the LifeSync website, politely redirect them back to LifeSync topics. Do not answer general trivia or unnecessary questions.
         
-        MISSION: We help users track product health (Electronics, Appliances, Vehicles, etc.) and provide realistic, balanced maintenance advice.
-        
-        KNOWLEDGE BASE:
-        - Provide expert advice on appliance care and lifecycle extension using a calm, advisory, and non-exaggerated tone.
-        - Avoid alarmist language. If a product is in good condition, reinforce user confidence.
-        - Always include the following disclaimer when providing specific health predictions: "This analysis is an estimate based on usage patterns and provided inputs."
+        STRICT CONTEXT:
+        - User's Current Screen: ${currentScreen}
+        - Inventory Context: ${fullContext}
+        - Disclaimer (Mandatory): Always include "This analysis is an estimate based on usage patterns and provided inputs." when giving health predictions.
 
         STRICT LANGUAGE RULES:
-        1. MIRROR USER: Respond in the EXACT same language as the user's latest message.
-        2. NATIVE SCRIPT: Use NATIVE SCRIPT ONLY for regional languages (e.g., Devanagari for Hindi).
+        1. DEFAULT LANGUAGE: Use English for all responses UNLESS the user specifically communicates in or requests a regional language (Hindi, Telugu, etc.).
+        2. NATIVE SCRIPT: When a regional language is requested, respond ONLY in that native script (Devanagari, Telugu script, etc.).
+        3. NO MIXING: Do not mix languages. If it's English, keep it pure English. If it's Hindi, keep it pure Hindi.
+        
+        SUGGESTION CHIPS (MANDATORY):
+        - At the VERY end of EVERY response, you MUST provide exactly 3 relevant follow-up questions.
+        - These questions must be in the same language as your response.
+        - YOU MUST ALWAYS USE THE ENGLISH WORD [SUGGESTIONS: AS THE MARKER.
+        - FORMAT EXAMPLE (Hindi): [SUGGESTIONS: मेरा बैटरी कैसा है? | मुझे सेवा कब लेनी चाहिए? | और विवरण दिखाएं]
+        - YOU MUST USE THE | CHARACTER TO SEPARATE THE 3 QUESTIONS.
         
         OUTPUT FORMAT:
-        - Plain text ONLY. NO markdown, stars (**), or hashtags (#).
-        - AT THE VERY END, provide exactly 3 follow-up questions.
-        - YOU MUST USE THIS EXACT FORMAT: [SUGGESTIONS: Question 1 | Question 2 | Question 3]`;
+        - Plain text ONLY. NO markdown, stars (**), or hashtags (#).`;
 
         const userPrompt = `
             Inventory Context: ${fullContext}

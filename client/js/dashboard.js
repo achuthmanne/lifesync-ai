@@ -147,6 +147,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let chatHistory = []; 
     let allNotifications = [];
     let currentNotifFilter = 'all';
+    let currentActiveView = 'Dashboard';
 
     // Init UI
     userNameDisplay.textContent = user.name;
@@ -518,18 +519,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (navWarranty) navWarranty.classList.remove('active');
 
         if (viewName === 'dashboard') {
+            currentActiveView = 'Dashboard';
             dashboardView.style.display = 'block';
             navDashboard.classList.add('active');
             loadDashboard();
         } else if (viewName === 'analytics') {
+            currentActiveView = 'Analytics';
             analyticsView.style.display = 'block';
             navAnalytics.classList.add('active');
             loadAnalytics();
         } else if (viewName === 'notifications') {
+            currentActiveView = 'Notifications';
             notificationsView.style.display = 'block';
             navNotifications.classList.add('active');
             loadNotifications();
         } else if (viewName === 'warranty') {
+            currentActiveView = 'Warranty Wallet';
             if (warrantyView) warrantyView.style.display = 'block';
             if (navWarranty) navWarranty.classList.add('active');
             loadWarrantyWallet();
@@ -1231,7 +1236,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         chatMessages.scrollTop = chatMessages.scrollHeight;
 
         try {
-            const res = await api.ai.chat(msg, null, chatHistory);
+            const res = await api.ai.chat(msg, null, chatHistory, currentActiveView);
             const typingEl = document.getElementById(typingId);
             if (typingEl) typingEl.remove();
             
@@ -1239,21 +1244,40 @@ document.addEventListener('DOMContentLoaded', async () => {
             let provider = res.data.provider;
             let suggestions = [];
 
-            // Flexible Parsing for [SUGGESTIONS: ...] or SUGGESTIONS: ...
-            const suggestMatch = aiText.match(/\[?SUGGESTIONS: (.*?)\]?$/i);
+            // Robust Parsing for Suggestion Chips
+            const suggestRegex = /\[?\s*SUGGESTIONS:\s*(.*?)\]?\s*$/i;
+            const suggestMatch = aiText.match(suggestRegex);
+            
             if (suggestMatch) {
-                const rawSuggestions = suggestMatch[1].split('|').map(s => s.trim());
-                suggestions = rawSuggestions.filter(s => s.length > 0);
+                const content = suggestMatch[1];
+                // Try splitting by pipe, then comma, then newline if needed
+                let rawSuggestions = [];
+                if (content.includes('|')) {
+                    rawSuggestions = content.split('|');
+                } else if (content.includes(',')) {
+                    rawSuggestions = content.split(',');
+                } else {
+                    // Fallback to splitting by common question mark patterns
+                    rawSuggestions = content.split(/(?<=\?)/);
+                }
+                
+                suggestions = rawSuggestions.map(s => s.trim()).filter(s => s.length > 5).slice(0, 3);
+                // Remove the suggestion block entirely from the visible text
                 aiText = aiText.replace(suggestMatch[0], '').trim();
-                renderDynamicSuggestions(suggestions);
-            } else {
-                // Fallback to inventory suggestions
-                const response = await api.products.getAll();
-                refreshChatSuggestions(response.data);
             }
 
             // Real-time Typewriter Effect
             typeMessage('ai', aiText, provider);
+
+            // Render chips separately
+            if (suggestions.length > 0) {
+                renderDynamicSuggestions(suggestions);
+            } else {
+                // If AI fails to provide suggestions, generate some based on inventory
+                const inventoryRes = await api.products.getAll();
+                refreshChatSuggestions(inventoryRes.data);
+            }
+
 
             // Update history
             chatHistory.push({ role: 'user', content: msg });
@@ -1355,8 +1379,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             utterance.lang = targetLang;
         }
 
-        utterance.rate = (targetLang === 'en-US') ? 1.0 : 0.95; 
-        utterance.pitch = 1.0;
+        // Clarity optimization
+        if (targetLang === 'en-US') {
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
+        } else {
+            // Slightly slower rate for regional languages makes the pronunciation much clearer
+            utterance.rate = 0.88; 
+            utterance.pitch = 1.05; // Slightly higher pitch often sounds more natural in regional TTS
+        }
+        
         window.speechSynthesis.speak(utterance);
     };
 
