@@ -508,7 +508,27 @@
                 <div class="details-main">
                     <div class="insight-box glass">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <h4 style="color: var(--primary); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">AI Lifecycle Analysis</h4>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div class="ls-ai-logo" style="width: 1.1rem; height: 1.1rem;">
+                                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <defs>
+                                            <linearGradient id="ai-grad-static-modal" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                <stop offset="0%" stop-color="var(--primary)" />
+                                                <stop offset="100%" stop-color="var(--accent)" />
+                                            </linearGradient>
+                                        </defs>
+                                        <path d="M3 9C3 6 7 4 12 4C17 4 21 6 21 9" stroke="url(#ai-grad-static-modal)" stroke-width="2.2" stroke-linecap="round"/>
+                                        <path d="M18 8L21 11L24 8Z" fill="url(#ai-grad-static-modal)" />
+                                        <path d="M21 15C21 18 17 20 12 20C7 20 3 18 3 15" stroke="url(#ai-grad-static-modal)" stroke-width="2.2" stroke-linecap="round"/>
+                                        <path d="M6 16L3 13L0 16Z" fill="url(#ai-grad-static-modal)" />
+                                        <circle cx="12" cy="12" r="1.2" class="ai-core" fill="url(#ai-grad-static-modal)">
+                                            <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite" />
+                                            <animate attributeName="r" values="1;1.5;1" dur="2s" repeatCount="indefinite" />
+                                        </circle>
+                                    </svg>
+                                </div>
+                                <h4 style="color: var(--primary); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; margin: 0;">AI Lifecycle Analysis</h4>
+                            </div>
                             <span id="det-provider-badge" class="provider-badge">Powered by AI</span>
                         </div>
                         <p id="det-prediction" style="font-size: 1.1rem; line-height: 1.5; margin-bottom: 20px;">Detailed prediction will appear here based on your usage patterns.</p>
