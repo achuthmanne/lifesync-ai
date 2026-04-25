@@ -131,6 +131,25 @@
     to { transform: scale(1.08); }
 }
 
+.hero-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: 999px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
 /* Demo Video Section */
 .demo-video-wrapper {
     position: relative;

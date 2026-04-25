@@ -38,9 +38,11 @@
             <div class="hero-visual" data-aos>
                 <div class="mockup-container">
                     <div class="hero-carousel">
+                        <div id="hero-badge" class="hero-badge">Dashboard</div>
                         <div class="carousel-slide active" style="background-image: url('assets/dashboard_real.png');"></div>
-                        <div class="carousel-slide" style="background-image: url('assets/analytics_real.png');"></div>
                         <div class="carousel-slide" style="background-image: url('assets/add_product_real.png');"></div>
+                        <div class="carousel-slide" style="background-image: url('assets/analytics_real.png');"></div>
+                        <div class="carousel-slide" style="background-image: url('assets/ai_real.png');"></div>
                     </div>
                 </div>
             </div>
@@ -111,7 +113,6 @@
                 </div>
                 <div class="video-dots" id="video-dots">
                     <!-- Dots generated dynamically -->
-                </div>
                 </div>
             </div>
         </section>
@@ -1077,10 +1078,22 @@
             let currentSlide = 0;
 
             if (slides.length > 0) {
+                const heroBadge = document.getElementById('hero-badge');
+                const labels = ["Dashboard", "Add Product", "AI Analysis", "AI Insights"];
+
                 setInterval(() => {
                     slides[currentSlide].classList.remove('active');
                     currentSlide = (currentSlide + 1) % slides.length;
                     slides[currentSlide].classList.add('active');
+                    
+                    // Update badge text if it exists
+                    if (heroBadge) {
+                        heroBadge.style.opacity = '0';
+                        setTimeout(() => {
+                            heroBadge.textContent = labels[currentSlide];
+                            heroBadge.style.opacity = '1';
+                        }, 300);
+                    }
                 }, 4000);
             }
 

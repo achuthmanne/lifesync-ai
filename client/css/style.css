@@ -2327,15 +2327,6 @@ p, label, input, select, textarea, button, span, div {
     position: relative;
 }
 
-.sidebar-profile {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: var(--transition);
-}
 
 .sidebar-footer {
     padding-top: 20px;
@@ -2350,6 +2341,10 @@ p, label, input, select, textarea, button, span, div {
     border-radius: 12px;
     cursor: pointer;
     transition: var(--transition);
+}
+
+.sidebar-profile .fa-ellipsis-v {
+    margin-left: auto;
 }
 
 .sidebar-profile:hover {
@@ -2426,7 +2421,7 @@ p, label, input, select, textarea, button, span, div {
 
 .star-rating i {
     font-size: 2.2rem;
-    color: rgba(255, 255, 255, 0.08);
+    color: #cbd5e1;
     cursor: pointer;
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s;
 }
