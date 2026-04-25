@@ -108,12 +108,10 @@
                             </video>
                         </div>
                     </div>
-                    <div class="video-dots" id="video-dots">
-                        <div class="video-dot active" onclick="goToVideo(0)"></div>
-                        <div class="video-dot" onclick="goToVideo(1)"></div>
-                        <div class="video-dot" onclick="goToVideo(2)"></div>
-                        <div class="video-dot" onclick="goToVideo(3)"></div>
-                    </div>
+                </div>
+                <div class="video-dots" id="video-dots">
+                    <!-- Dots generated dynamically -->
+                </div>
                 </div>
             </div>
         </section>
@@ -1089,35 +1087,47 @@
             // 2. Demo Video Scroll Logic
             const videos = document.querySelectorAll('.demo-video');
             const videoContainer = document.getElementById('video-container');
-            const dots = document.querySelectorAll('.video-dot');
+            const dotsContainer = document.getElementById('video-dots');
             let currentVid = 0;
 
-            window.goToVideo = (index) => {
-                currentVid = index;
-                updateVideoSlider();
-            };
-
-            const updateVideoSlider = () => {
-                // Update slider position
-                videoContainer.style.transform = `translateX(-${currentVid * 100}%)`;
-                
-                // Update dots
-                dots.forEach((dot, i) => {
-                    dot.classList.toggle('active', i === currentVid);
-                });
-
-                // Handle video playback
-                videos.forEach((vid, i) => {
-                    if (i === currentVid) {
-                        vid.currentTime = 0;
-                        vid.play().catch(e => console.log("Play failed", e));
-                    } else {
-                        vid.pause();
-                    }
-                });
-            };
-
             if (videos.length > 0) {
+                // Dynamic dot generation based on video count
+                dotsContainer.innerHTML = '';
+                videos.forEach((_, i) => {
+                    const dot = document.createElement('div');
+                    dot.className = `video-dot ${i === 0 ? 'active' : ''}`;
+                    dot.setAttribute('title', `Step ${i + 1}`);
+                    dot.onclick = () => window.goToVideo(i);
+                    dotsContainer.appendChild(dot);
+                });
+
+                const dots = dotsContainer.querySelectorAll('.video-dot');
+
+                window.goToVideo = (index) => {
+                    currentVid = index;
+                    updateVideoSlider();
+                };
+
+                const updateVideoSlider = () => {
+                    // Update slider position
+                    videoContainer.style.transform = `translateX(-${currentVid * 100}%)`;
+                    
+                    // Update dots
+                    dots.forEach((dot, i) => {
+                        dot.classList.toggle('active', i === currentVid);
+                    });
+
+                    // Handle video playback
+                    videos.forEach((vid, i) => {
+                        if (i === currentVid) {
+                            vid.currentTime = 0;
+                            vid.play().catch(e => console.log("Play failed", e));
+                        } else {
+                            vid.pause();
+                        }
+                    });
+                };
+
                 // Auto transition on video end
                 videos.forEach((vid, index) => {
                     vid.onended = () => {

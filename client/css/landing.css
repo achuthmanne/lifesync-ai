@@ -146,10 +146,12 @@
     width: 100%;
     height: 100%;
     transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+    will-change: transform;
 }
 
 .demo-video {
-    min-width: 100%;
+    flex: 0 0 100%;
+    width: 100%;
     height: 100%;
     object-fit: cover;
     flex-shrink: 0;
@@ -158,23 +160,32 @@
 .video-dots {
     display: flex;
     justify-content: center;
-    gap: 12px;
-    margin-top: 30px;
+    gap: 15px;
+    margin-top: 40px;
+    position: relative;
+    z-index: 10;
 }
 
 .video-dot {
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
     border-radius: 50%;
-    background: #e2e8f0;
+    background: #cbd5e1;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid transparent;
+}
+
+.video-dot:hover {
+    background: #94a3b8;
+    transform: scale(1.2);
 }
 
 .video-dot.active {
     background: var(--primary);
-    transform: scale(1.3);
-    box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+    transform: scale(1.4);
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+    border-color: rgba(59, 130, 246, 0.2);
 }
 
 /* Feature Mockup Elements */
