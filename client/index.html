@@ -37,40 +37,10 @@
             </div>
             <div class="hero-visual" data-aos>
                 <div class="mockup-container">
-                    <div class="mockup-header">
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                    </div>
-                    <div class="mockup-body">
-                        <div class="mockup-card">
-                            <div class="mockup-line" style="width: 40%; background: var(--primary);"></div>
-                            <div class="mockup-line"></div>
-                            <div class="mockup-line short"></div>
-                        </div>
-                        <div class="mockup-card">
-                            <div class="mockup-line" style="width: 50%; background: var(--accent);"></div>
-                            <div class="mockup-line"></div>
-                            <div class="mockup-line short"></div>
-                        </div>
-                        <div class="mockup-card" style="grid-column: span 2; height: 180px;">
-                            <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
-                                <div class="ls-ai-logo" style="width: 1.2rem; height: 1.2rem;">
-                                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <linearGradient id="ai-grad-hero" x1="0%" y1="0%" x2="100%" y2="100%">
-                                            <stop offset="0%" stop-color="var(--primary)" />
-                                            <stop offset="100%" stop-color="var(--accent)" />
-                                        </linearGradient>
-                                        <path d="M3 9C3 6 7 4 12 4C17 4 21 6 21 9" stroke="url(#ai-grad-hero)" stroke-width="2.2" stroke-linecap="round"/>
-                                        <circle cx="12" cy="12" r="1.5" fill="url(#ai-grad-hero)" />
-                                    </svg>
-                                </div>
-                                <div class="mockup-line" style="width: 30%; background: var(--primary);"></div>
-                            </div>
-                            <div class="mockup-line"></div>
-                            <div class="mockup-line"></div>
-                            <div class="mockup-line" style="width: 80%;"></div>
-                        </div>
+                    <div class="hero-carousel">
+                        <div class="carousel-slide active" style="background-image: url('assets/dashboard_real.png');"></div>
+                        <div class="carousel-slide" style="background-image: url('assets/analytics_real.png');"></div>
+                        <div class="carousel-slide" style="background-image: url('assets/add_product_real.png');"></div>
                     </div>
                 </div>
             </div>
@@ -120,33 +90,29 @@
                 <h2>Experience the Platform</h2>
                 <p>A unified interface designed for clarity and efficiency.</p>
             </div>
-            <div style="max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px;">
-                <div class="mockup-container" style="height: auto; transform: none; padding: 20px;" data-aos>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <div class="mockup-line" style="width: 200px; height: 12px; background: var(--primary);"></div>
-                        <div style="display: flex; gap: 10px;">
-                            <div class="dot" style="width: 30px; height: 30px;"></div>
-                            <div class="dot" style="width: 30px; height: 30px;"></div>
+            <div style="max-width: 1000px; margin: 0 auto; width: 100%;">
+                <div class="mockup-container" style="height: 550px; transform: none; padding: 0; background: #000;" data-aos>
+                    <div class="demo-video-wrapper">
+                        <div class="demo-video-container" id="video-container">
+                            <video class="demo-video" id="demo-vid-1" muted playsinline autoplay>
+                                <source src="assets/login.mp4" type="video/mp4">
+                            </video>
+                            <video class="demo-video" id="demo-vid-2" muted playsinline>
+                                <source src="assets/details.mp4" type="video/mp4">
+                            </video>
+                            <video class="demo-video" id="demo-vid-3" muted playsinline>
+                                <source src="assets/chat.mp4" type="video/mp4">
+                            </video>
+                            <video class="demo-video" id="demo-vid-4" muted playsinline>
+                                <source src="assets/warranty.mp4" type="video/mp4">
+                            </video>
                         </div>
                     </div>
-                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px;">
-                        <div class="mockup-card" style="height: 80px;"></div>
-                        <div class="mockup-card" style="height: 80px;"></div>
-                        <div class="mockup-card" style="height: 80px;"></div>
-                        <div class="mockup-card" style="height: 80px;"></div>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
-                        <div class="mockup-card" style="height: 250px;">
-                            <div class="mockup-line" style="width: 40%; margin-bottom: 20px;"></div>
-                            <div class="mockup-line" style="margin-bottom: 10px;"></div>
-                            <div class="mockup-line" style="margin-bottom: 10px;"></div>
-                            <div class="mockup-line" style="width: 80%;"></div>
-                        </div>
-                        <div class="mockup-card" style="height: 250px;">
-                            <div style="width: 100%; height: 100px; background: #e2e8f0; border-radius: 8px; margin-bottom: 15px;"></div>
-                            <div class="mockup-line"></div>
-                            <div class="mockup-line" style="width: 60%;"></div>
-                        </div>
+                    <div class="video-dots" id="video-dots">
+                        <div class="video-dot active" onclick="goToVideo(0)"></div>
+                        <div class="video-dot" onclick="goToVideo(1)"></div>
+                        <div class="video-dot" onclick="goToVideo(2)"></div>
+                        <div class="video-dot" onclick="goToVideo(3)"></div>
                     </div>
                 </div>
             </div>
@@ -1105,5 +1071,65 @@
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/dashboard.js"></script>
+    <script>
+        // Landing Page Visual Engines
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Hero Carousel Logic
+            const slides = document.querySelectorAll('.carousel-slide');
+            let currentSlide = 0;
+
+            if (slides.length > 0) {
+                setInterval(() => {
+                    slides[currentSlide].classList.remove('active');
+                    currentSlide = (currentSlide + 1) % slides.length;
+                    slides[currentSlide].classList.add('active');
+                }, 4000);
+            }
+
+            // 2. Demo Video Scroll Logic
+            const videos = document.querySelectorAll('.demo-video');
+            const videoContainer = document.getElementById('video-container');
+            const dots = document.querySelectorAll('.video-dot');
+            let currentVid = 0;
+
+            window.goToVideo = (index) => {
+                currentVid = index;
+                updateVideoSlider();
+            };
+
+            const updateVideoSlider = () => {
+                // Update slider position
+                videoContainer.style.transform = `translateX(-${currentVid * 100}%)`;
+                
+                // Update dots
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === currentVid);
+                });
+
+                // Handle video playback
+                videos.forEach((vid, i) => {
+                    if (i === currentVid) {
+                        vid.currentTime = 0;
+                        vid.play().catch(e => console.log("Play failed", e));
+                    } else {
+                        vid.pause();
+                    }
+                });
+            };
+
+            if (videos.length > 0) {
+                // Auto transition on video end
+                videos.forEach((vid, index) => {
+                    vid.onended = () => {
+                        currentVid = (index + 1) % videos.length;
+                        updateVideoSlider();
+                    };
+                });
+
+                // Initial play
+                videos[0].play().catch(e => console.log("Initial play failed", e));
+            }
+        });
+    </script>
 </body>
 </html>
