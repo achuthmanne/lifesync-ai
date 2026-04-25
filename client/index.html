@@ -7,11 +7,213 @@
     <title>LifeSync AI | Product Lifecycle Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css?v=1.1">
+    <link rel="stylesheet" href="css/landing.css">
     <link rel="stylesheet" href="css/warranty.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="dashboard-layout">
+    <!-- Landing Page View -->
+    <div id="landing-view" class="landing-page" style="display: none;">
+        <nav class="landing-nav">
+            <div class="logo">
+                <i class="fas fa-sync-alt" style="color: var(--primary);"></i> LifeSync AI
+            </div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How it Works</a>
+                <button class="btn btn-outline" style="min-width: auto; padding: 10px 20px;" onclick="openAuth('login')">Login</button>
+                <button class="btn btn-primary" style="min-width: auto; padding: 10px 25px;" onclick="openAuth('register')">Get Started</button>
+            </div>
+        </nav>
+
+        <section class="hero">
+            <div class="hero-content" data-aos>
+                <h1>Smart Product Lifecycle Management with AI</h1>
+                <p>Extend the life of your products, track warranties, and get predictive maintenance alerts powered by the world's most advanced AI engines.</p>
+                <div class="hero-btns">
+                    <button class="btn btn-primary" style="padding: 16px 32px;" onclick="openAuth('register')">Create Free Account</button>
+                    <button class="btn btn-outline" style="padding: 16px 32px;" onclick="openAuth('login')">Sign In</button>
+                </div>
+            </div>
+            <div class="hero-visual" data-aos>
+                <div class="mockup-container">
+                    <div class="mockup-header">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                    <div class="mockup-body">
+                        <div class="mockup-card">
+                            <div class="mockup-line" style="width: 40%; background: var(--primary);"></div>
+                            <div class="mockup-line"></div>
+                            <div class="mockup-line short"></div>
+                        </div>
+                        <div class="mockup-card">
+                            <div class="mockup-line" style="width: 50%; background: var(--accent);"></div>
+                            <div class="mockup-line"></div>
+                            <div class="mockup-line short"></div>
+                        </div>
+                        <div class="mockup-card" style="grid-column: span 2; height: 180px;">
+                            <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+                                <div class="ls-ai-logo" style="width: 1.2rem; height: 1.2rem;">
+                                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <linearGradient id="ai-grad-hero" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" stop-color="var(--primary)" />
+                                            <stop offset="100%" stop-color="var(--accent)" />
+                                        </linearGradient>
+                                        <path d="M3 9C3 6 7 4 12 4C17 4 21 6 21 9" stroke="url(#ai-grad-hero)" stroke-width="2.2" stroke-linecap="round"/>
+                                        <circle cx="12" cy="12" r="1.5" fill="url(#ai-grad-hero)" />
+                                    </svg>
+                                </div>
+                                <div class="mockup-line" style="width: 30%; background: var(--primary);"></div>
+                            </div>
+                            <div class="mockup-line"></div>
+                            <div class="mockup-line"></div>
+                            <div class="mockup-line" style="width: 80%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <div class="section-header" data-aos>
+                <h2>Intelligent Features for Modern Assets</h2>
+                <p>Everything you need to manage your inventory's health in one place.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card" data-aos>
+                    <div class="feature-icon"><i class="fas fa-brain"></i></div>
+                    <h3>AI Lifecycle Analysis</h3>
+                    <p>Get deep insights into your product's remaining lifespan based on usage patterns and manufacturer data.</p>
+                </div>
+                <div class="feature-card" data-aos>
+                    <div class="feature-icon"><i class="fas fa-heartbeat"></i></div>
+                    <h3>Real-Time Monitoring</h3>
+                    <p>Continuous health assessment of your assets with predictive failure probability scores.</p>
+                </div>
+                <div class="feature-card" data-aos>
+                    <div class="feature-icon"><i class="fas fa-wallet"></i></div>
+                    <h3>Warranty Wallet</h3>
+                    <p>Securely store and manage all your digital warranties and invoices in a single, encrypted vault.</p>
+                </div>
+                <div class="feature-card" data-aos>
+                    <div class="feature-icon"><i class="fas fa-barcode"></i></div>
+                    <h3>AI Barcode Detection</h3>
+                    <p>Add products in seconds by scanning barcodes. Our AI automatically identifies model, brand, and specs.</p>
+                </div>
+                <div class="feature-card" data-aos>
+                    <div class="feature-icon"><i class="fas fa-bell"></i></div>
+                    <h3>Smart Notifications</h3>
+                    <p>Receive timely alerts before warranties expire or when maintenance is required to prevent failures.</p>
+                </div>
+                <div class="feature-card" data-aos>
+                    <div class="feature-icon"><i class="fas fa-comments"></i></div>
+                    <h3>AI Diagnostic Chat</h3>
+                    <p>Talk to our expert AI assistant to troubleshoot issues or get customized care instructions for any product.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="preview" class="features" style="background: #f8fafc; padding-top: 0;">
+            <div class="section-header" data-aos>
+                <h2>Experience the Platform</h2>
+                <p>A unified interface designed for clarity and efficiency.</p>
+            </div>
+            <div style="max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px;">
+                <div class="mockup-container" style="height: auto; transform: none; padding: 20px;" data-aos>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <div class="mockup-line" style="width: 200px; height: 12px; background: var(--primary);"></div>
+                        <div style="display: flex; gap: 10px;">
+                            <div class="dot" style="width: 30px; height: 30px;"></div>
+                            <div class="dot" style="width: 30px; height: 30px;"></div>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px;">
+                        <div class="mockup-card" style="height: 80px;"></div>
+                        <div class="mockup-card" style="height: 80px;"></div>
+                        <div class="mockup-card" style="height: 80px;"></div>
+                        <div class="mockup-card" style="height: 80px;"></div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+                        <div class="mockup-card" style="height: 250px;">
+                            <div class="mockup-line" style="width: 40%; margin-bottom: 20px;"></div>
+                            <div class="mockup-line" style="margin-bottom: 10px;"></div>
+                            <div class="mockup-line" style="margin-bottom: 10px;"></div>
+                            <div class="mockup-line" style="width: 80%;"></div>
+                        </div>
+                        <div class="mockup-card" style="height: 250px;">
+                            <div style="width: 100%; height: 100px; background: #e2e8f0; border-radius: 8px; margin-bottom: 15px;"></div>
+                            <div class="mockup-line"></div>
+                            <div class="mockup-line" style="width: 60%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="how-it-works" class="how-it-works">
+            <div class="section-header" data-aos>
+                <h2>How LifeSync Works</h2>
+                <p>Get started in three simple steps and take control of your asset lifecycle.</p>
+            </div>
+            <div class="steps-grid">
+                <div class="step-card" data-aos>
+                    <div class="step-number">1</div>
+                    <h3>Add Your Products</h3>
+                    <p>Scan a barcode or enter details manually to bring your products into the ecosystem.</p>
+                </div>
+                <div class="step-card" data-aos>
+                    <div class="step-number">2</div>
+                    <h3>AI Deep Analysis</h3>
+                    <p>Our multi-engine AI analyzes usage and age to generate a custom health profile.</p>
+                </div>
+                <div class="step-card" data-aos>
+                    <div class="step-number">3</div>
+                    <h3>Stay Ahead</h3>
+                    <p>Receive proactive alerts and expert maintenance tips to extend product life.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="final-cta" data-aos>
+            <h2>Start managing your products smarter</h2>
+            <p>Join thousands of users who trust LifeSync AI to monitor their valuable assets.</p>
+            <button class="btn btn-primary" style="padding: 18px 40px; font-size: 1.1rem;" onclick="openAuth('register')">Create Account Now</button>
+        </section>
+
+        <footer class="landing-footer">
+            <div class="footer-brand">
+                <div class="logo">
+                    <i class="fas fa-sync-alt" style="color: var(--primary);"></i> LifeSync AI
+                </div>
+                <p>The world's first AI-powered product lifecycle management platform for consumers and professionals.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Product</h4>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#how-it-works">How it Works</a></li>
+                    <li><a href="#" onclick="openAuth('login')">Login</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2026 LifeSync AI. All rights reserved. Professional Grade Lifecycle Management.
+            </div>
+        </footer>
+    </div>
+
+    <!-- App View Container -->
+    <div id="app-view" style="display: none;">
+        <div class="dashboard-layout">
         <!-- Sidebar -->
         <div class="sidebar glass">
             <div class="logo">
@@ -840,6 +1042,7 @@
 
     <!-- Auth Modal (Hidden by default) -->
     <div id="auth-modal" class="modal">
+        <button class="close-modal-btn" id="close-auth-modal" style="position: absolute; top: 30px; right: 30px; z-index: 100; background: rgba(255,255,255,0.1); color: white;"><i class="fas fa-times"></i></button>
         <div class="auth-container" style="max-width: 450px;">
             <!-- Login Card -->
             <div id="login-card" class="auth-card glass">
@@ -892,6 +1095,8 @@
             </div>
         </div>
     </div>
+
+    </div> <!-- End app-view -->
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

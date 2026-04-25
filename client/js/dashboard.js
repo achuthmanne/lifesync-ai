@@ -27,22 +27,80 @@ document.addEventListener('DOMContentLoaded', async () => {
         `;
     };
 
+    // AOS (Animate on Scroll) Implementation
+    const observerOptions = {
+        threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('aos-animate');
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('[data-aos]').forEach(el => observer.observe(el));
+
+    // Smooth scroll for landing links
+    document.querySelectorAll('.nav-links a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    window.openAuth = (type) => {
+        const authModal = document.getElementById('auth-modal');
+        const loginCard = document.getElementById('login-card');
+        const registerCard = document.getElementById('register-card');
+        
+        if (authModal) {
+            authModal.style.display = 'flex';
+            if (type === 'login') {
+                loginCard.style.display = 'block';
+                registerCard.style.display = 'none';
+            } else {
+                loginCard.style.display = 'none';
+                registerCard.style.display = 'block';
+            }
+        }
+    };
+
+    const closeAuthBtn = document.getElementById('close-auth-modal');
+    if (closeAuthBtn) {
+        closeAuthBtn.addEventListener('click', () => {
+            const authModal = document.getElementById('auth-modal');
+            if (authModal) {
+                authModal.style.display = 'none';
+                authModal.classList.remove('full-page-auth');
+            }
+        });
+    }
+
     // Auth Check
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user'));
+    const landingView = document.getElementById('landing-view');
+    const appView = document.getElementById('app-view');
     const authModal = document.getElementById('auth-modal');
-    const dashboardLayout = document.querySelector('.dashboard-layout');
     
     if (!token || !user) {
-        if (dashboardLayout) dashboardLayout.style.display = 'none';
+        if (appView) appView.style.display = 'none';
+        if (landingView) landingView.style.display = 'block';
         if (authModal) {
-            authModal.style.display = 'flex';
             authModal.classList.add('full-page-auth');
         }
         return;
     }
 
-    if (dashboardLayout) dashboardLayout.style.display = 'flex';
+    if (landingView) landingView.style.display = 'none';
+    if (appView) appView.style.display = 'block';
     if (authModal) authModal.style.display = 'none';
 
     if (window.speechSynthesis) {
