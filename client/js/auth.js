@@ -6,6 +6,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginCard = document.getElementById('login-card');
     const registerCard = document.getElementById('register-card');
 
+    const forgotForm = document.getElementById('forgot-password-form');
+    const resetForm = document.getElementById('reset-password-form');
+    const showForgot = document.getElementById('show-forgot-password');
+    const backToLogin = document.getElementById('back-to-login');
+    const resetCard = document.getElementById('reset-card');
+    const resetStatusText = document.getElementById('reset-status-text');
+
     // Toggle between login and register
     showRegister.addEventListener('click', (e) => {
         e.preventDefault();
@@ -17,6 +24,74 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         registerCard.style.display = 'none';
         loginCard.style.display = 'block';
+    });
+
+    // Forgot Password Navigation
+    showForgot.addEventListener('click', (e) => {
+        e.preventDefault();
+        loginCard.style.display = 'none';
+        resetCard.style.display = 'block';
+    });
+
+    backToLogin.addEventListener('click', (e) => {
+        e.preventDefault();
+        resetCard.style.display = 'none';
+        loginCard.style.display = 'block';
+    });
+
+    // Forgot Password Form Logic
+    forgotForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('reset-email-input').value;
+        const submitBtn = forgotForm.querySelector('button');
+
+        try {
+            submitBtn.classList.add('btn-loading');
+            const data = await api.auth.forgotPassword(email);
+            
+            showNotification(data.message, 'success');
+            
+            forgotForm.style.display = 'none';
+            resetForm.style.display = 'block';
+            resetStatusText.textContent = `Enter the verification code sent to ${email}`;
+
+            if (data.otp) {
+                console.log('DEBUG OTP:', data.otp);
+                setTimeout(() => showNotification(`Debug OTP: ${data.otp}`, 'info'), 1000);
+            }
+        } catch (error) {
+            showNotification(error.message, 'error');
+        } finally {
+            submitBtn.classList.remove('btn-loading');
+        }
+    });
+
+    // Reset Password Form Logic
+    resetForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('reset-email-input').value;
+        const otp = document.getElementById('reset-otp').value;
+        const newPassword = document.getElementById('reset-new-password').value;
+        const submitBtn = resetForm.querySelector('button');
+
+        try {
+            submitBtn.classList.add('btn-loading');
+            const data = await api.auth.resetPassword({ email, otp, newPassword });
+            
+            showNotification(data.message, 'success');
+            
+            resetCard.style.display = 'none';
+            loginCard.style.display = 'block';
+            
+            // Cleanup
+            forgotForm.style.display = 'block';
+            resetForm.style.display = 'none';
+            resetStatusText.textContent = 'Enter your email to receive a verification code';
+        } catch (error) {
+            showNotification(error.message, 'error');
+        } finally {
+            submitBtn.classList.remove('btn-loading');
+        }
     });
 
     // Login logic

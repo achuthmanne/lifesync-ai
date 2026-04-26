@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const sendEmail = require('../utils/sendEmail');
 
 // @desc    Register user
 // @route   POST /api/auth/register
@@ -91,6 +92,91 @@ exports.googleLogin = async (req, res) => {
             token,
             user: { id: user._id, name: user.name, email: user.email }
         });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+// @desc    Forgot Password - Send OTP via Real Email
+// @route   POST /api/auth/forgotpassword
+// @access  Public
+exports.forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        // Generate 6-digit OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        
+        user.resetPasswordOTP = otp;
+        user.resetPasswordExpire = Date.now() + 10 * 60 * 1000; // 10 minutes
+        await user.save();
+
+        // Send Real Email
+        const message = `Your password reset code is: ${otp}. It will expire in 10 minutes.`;
+        const html = `
+            <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px; max-width: 500px;">
+                <h2 style="color: #6366f1;">LifeSync AI | Password Reset</h2>
+                <p>Hello,</p>
+                <p>You requested to reset your password. Please use the verification code below:</p>
+                <div style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #6366f1; text-align: center; margin: 30px 0; background: #f8fafc; padding: 20px; border-radius: 8px;">
+                    ${otp}
+                </div>
+                <p style="color: #64748b; font-size: 14px;">This code will expire in 10 minutes. If you didn't request this, please ignore this email.</p>
+                <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+                <p style="font-size: 12px; color: #94a3b8; text-align: center;">© 2026 LifeSync AI. All rights reserved.</p>
+            </div>
+        `;
+
+        try {
+            await sendEmail({
+                email: user.email,
+                subject: 'Your Password Reset Code - LifeSync AI',
+                message,
+                html
+            });
+
+            res.status(200).json({ success: true, message: 'Verification code sent to your email' });
+        } catch (err) {
+            console.error('Email send error:', err);
+            user.resetPasswordOTP = undefined;
+            user.resetPasswordExpire = undefined;
+            await user.save();
+            return res.status(500).json({ success: false, message: 'Email could not be sent. Please check your SMTP configuration.' });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+// @desc    Reset Password - Verify OTP
+// @route   POST /api/auth/resetpassword
+// @access  Public
+exports.resetPassword = async (req, res) => {
+    try {
+        const { email, otp, newPassword } = req.body;
+        
+        const user = await User.findOne({ 
+            email,
+            resetPasswordOTP: otp,
+            resetPasswordExpire: { $gt: Date.now() }
+        });
+
+        if (!user) {
+            return res.status(400).json({ success: false, message: 'Invalid or expired verification code' });
+        }
+
+        // Set new password
+        user.password = newPassword;
+        user.resetPasswordOTP = undefined;
+        user.resetPasswordExpire = undefined;
+        await user.save();
+
+        res.status(200).json({ success: true, message: 'Password reset successful. Please login.' });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }

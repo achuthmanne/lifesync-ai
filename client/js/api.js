@@ -74,7 +74,9 @@ const api = {
         login: (credentials) => api.request('/auth/login', 'POST', credentials, false),
         register: (userData) => api.request('/auth/register', 'POST', userData, false),
         getMe: () => api.request('/auth/me'),
-        googleLogin: (credential) => api.request('/auth/google', 'POST', { credential }, false)
+        googleLogin: (credential) => api.request('/auth/google', 'POST', { credential }, false),
+        forgotPassword: (email) => api.request('/auth/forgotpassword', 'POST', { email }, false),
+        resetPassword: (data) => api.request('/auth/resetpassword', 'POST', data, false)
     },
 
     products: {
