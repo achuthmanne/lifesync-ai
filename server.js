@@ -80,16 +80,24 @@ const clientPath = path.join(__dirname, 'client');
 if (fs.existsSync(publicPath)) {
     console.log('[Static] Serving from public folder');
     app.use(express.static(publicPath));
-    app.get('/:splat*', (req, res) => res.sendFile(path.join(publicPath, 'index.html')));
 } else if (fs.existsSync(clientPath)) {
     console.log('[Static] Serving from client folder');
     app.use(express.static(clientPath));
-    app.get('/:splat*', (req, res) => res.sendFile(path.join(clientPath, 'index.html')));
 } else {
     console.warn('[Static] Warning: Neither "public" nor "client" folder found!');
 }
 
-// 8. Production Error Handling Middleware
+// 8. Catch-all route for SPA (Final middleware)
+app.use((req, res) => {
+    const targetPath = fs.existsSync(publicPath) ? publicPath : clientPath;
+    if (fs.existsSync(path.join(targetPath, 'index.html'))) {
+        res.sendFile(path.join(targetPath, 'index.html'));
+    } else {
+        res.status(404).json({ success: false, message: 'Not Found' });
+    }
+});
+
+// 9. Production Error Handling Middleware
 app.use((err, req, res, next) => {
     console.error(`[Fatal Error] ${err.message}`);
     if (process.env.NODE_ENV !== 'production') {
