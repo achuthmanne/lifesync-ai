@@ -276,7 +276,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     welcomeText.textContent = `Hello, ${user.name.split(' ')[0]}!`;
 
     // Socket Initialization
-    const socket = io('http://localhost:5000');
+    const socket = io();
     socket.on('connect', () => {
         socket.emit('authenticate', user.id);
     });
@@ -2533,7 +2533,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <button class="btn btn-primary" onclick="openPreview('${warranty._id}')" style="flex: 1; font-size: 0.85rem; padding: 10px; min-width: 0;">
                         <i class="fas fa-eye"></i> View
                     </button>
-                    <a href="http://localhost:5000${warranty.documentUrl}" download class="btn" style="background: rgba(0,0,0,0.05); width: 44px; padding: 0; min-width: 44px;">
+                    <a href="${warranty.documentUrl}" download class="btn" style="background: rgba(0,0,0,0.05); width: 44px; padding: 0; min-width: 44px;">
                         <i class="fas fa-download"></i>
                     </a>
                     <button class="btn btn-danger-outline" onclick="deleteWarrantyDoc('${warranty._id}')" style="width: 44px; padding: 0; min-width: 44px;">
@@ -2553,7 +2553,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const previewBody = document.getElementById('preview-body');
         const previewTitle = document.getElementById('preview-title');
         const downloadBtn = document.getElementById('download-doc-btn');
-        const baseUrl = 'http://localhost:5000';
+        const baseUrl = '';
 
         previewTitle.textContent = `${warranty.documentName}`;
         downloadBtn.href = `${baseUrl}${warranty.documentUrl}`;

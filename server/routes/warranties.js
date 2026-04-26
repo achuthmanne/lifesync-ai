@@ -103,7 +103,7 @@ router.delete('/:id', auth.protect, async (req, res) => {
         }
 
         // Delete physical file
-        const filePath = path.join(__dirname, '..', '..', warranty.documentUrl);
+        const filePath = path.join(__dirname, '..', '..', 'server', warranty.documentUrl.startsWith('/') ? warranty.documentUrl.substring(1) : warranty.documentUrl);
         if (fs.existsSync(filePath)) {
             fs.unlinkSync(filePath);
         }

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
     --primary: #3b82f6; /* Vibrant Blue */
@@ -27,6 +27,10 @@
     padding: 0;
     box-sizing: border-box;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+input, select, textarea, button {
+    font-family: inherit;
 }
 
 body {
@@ -104,23 +108,19 @@ p, label, input, select, textarea, button, span, div {
     overflow-y: auto;
     background: #ffffff;
     padding: 50px;
-    border-radius: 24px;
-    box-shadow: var(--shadow-lg);
+    border-radius: 28px; /* Slightly rounder */
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); /* Stronger shadow */
     position: relative;
 }
 
-/* Custom scrollbar for modal content */
+/* Hidden scrollbar for modal content */
 .modal-content::-webkit-scrollbar {
-    width: 6px;
+    display: none;
 }
 
-.modal-content::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.modal-content::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
+.modal-content {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
 }
 
 @media (max-width: 768px) {
@@ -518,39 +518,50 @@ p, label, input, select, textarea, button, span, div {
 }
 
 .form-section-title {
-    font-size: 0.72rem;
-    font-weight: 700;
+    font-size: 0.8rem;
+    font-weight: 600; /* Natural semi-bold */
     text-transform: uppercase;
     letter-spacing: 1.5px;
     color: var(--primary);
-    margin-bottom: 12px;
-    margin-top: 5px;
-    opacity: 0.85;
+    margin-top: 35px; /* Increased from 5px */
+    margin-bottom: 20px; /* Increased from 12px */
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f1f5f9; /* Subtle divider */
     display: block;
 }
 
+.form-section-title:first-of-type {
+    margin-top: 0;
+}
+
 .form-group {
-    margin-bottom: 14px;
+    margin-bottom: 20px; /* Increased spacing */
     text-align: left;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 8px;
-    color: var(--text-muted);
+    margin-bottom: 10px; /* Better gap */
+    color: #1e293b; /* Darker contrast */
+    font-weight: 600; /* Increased weight */
     font-size: 0.9rem;
 }
 
 .form-group input {
     width: 100%;
-    padding: 12px 18px;
+    padding: 14px 20px; /* Slightly more padding */
+    height: 48px; /* Increased height */
     background: #ffffff;
-    border: 1px solid var(--glass-border);
-    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
     color: var(--text-main);
     outline: none;
-    transition: var(--transition);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); /* Enhanced transition */
     font-size: 0.95rem;
+}
+
+.form-group input:hover {
+    border-color: #cbd5e1;
 }
 
 .form-group input::placeholder {
@@ -607,13 +618,14 @@ p, label, input, select, textarea, button, span, div {
 
 .custom-select .select-selected {
     background: #ffffff;
-    border: 1px solid var(--glass-border);
+    border: 1px solid #e2e8f0;
     border-radius: 12px;
-    padding: 12px 16px;
+    padding: 14px 20px; /* Match input padding */
+    height: 48px; /* Match input height */
     color: var(--text-main);
     cursor: pointer;
     user-select: none;
-    transition: var(--transition);
+    transition: all 0.2s ease;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -627,6 +639,11 @@ p, label, input, select, textarea, button, span, div {
     font-size: 0.75rem;
     color: var(--text-light);
     margin-left: 10px;
+}
+
+.custom-select .select-selected.select-arrow-active {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1), 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .custom-select .select-selected.select-arrow-active:after {
@@ -673,10 +690,9 @@ p, label, input, select, textarea, button, span, div {
     font-size: 1rem;
 }
 
-.custom-select .select-selected:hover,
-.custom-select .select-selected:focus {
-    border-color: var(--primary);
-    background: rgba(255, 255, 255, 0.08);
+.custom-select .select-selected:hover {
+    border-color: #cbd5e1;
+    background: #fcfcfd;
 }
 
 .custom-select .select-items {
@@ -1168,9 +1184,6 @@ p, label, input, select, textarea, button, span, div {
 
 
 .product-name {
-    font-size: 1.25rem;
-    margin-bottom: 4px;
-    font-weight: 600;
     font-size: 1.3rem;
     font-weight: 600;
     margin-bottom: 6px;
@@ -1520,22 +1533,24 @@ p, label, input, select, textarea, button, span, div {
 }
 
 .close-modal-btn {
-    background: #f1f5f9;
-    border: none;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
     width: 36px;
     height: 36px;
     border-radius: 10px;
-    color: var(--text-main);
+    color: var(--text-muted);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: var(--transition);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .close-modal-btn:hover {
-    background: rgba(239, 68, 68, 0.1);
+    background: #f1f5f9;
+    border-color: #cbd5e1;
     color: var(--danger);
+    transform: rotate(90deg);
 }
 
 .btn-danger {
@@ -1589,10 +1604,9 @@ p, label, input, select, textarea, button, span, div {
     z-index: 2000;
 }
 
-.modal-content {
-    width: 100%;
-    max-width: 600px;
-    padding: 40px;
+/* Specific Modal Widths */
+#product-modal .modal-content, #details-modal .modal-content {
+    max-width: 850px;
 }
 
 /* Modal Stacking Logic */
@@ -2877,22 +2891,26 @@ p, label, input, select, textarea, button, span, div {
 /* Modal Tabs & Scanner Styling */
 .modal-tabs {
     display: flex;
-    gap: 15px;
-    margin-bottom: 25px;
-    border-bottom: 1px solid var(--glass-border);
-    padding-bottom: 15px;
+    gap: 30px; /* Increased gap */
+    margin-bottom: 30px;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 10px;
 }
 
 .modal-tab {
     background: none;
     border: none;
     color: var(--text-muted);
-    font-size: 1.1rem;
+    font-size: 1rem; /* Slightly smaller */
     font-weight: 600;
     cursor: pointer;
-    padding: 8px 0;
+    padding: 10px 0;
     position: relative;
-    transition: var(--transition);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal-tab:hover {
+    color: var(--text-main);
 }
 
 .modal-tab.active {
@@ -2912,8 +2930,8 @@ p, label, input, select, textarea, button, span, div {
 
 .scanner-container {
     width: 100%;
-    height: 350px;
-    background: rgba(0,0,0,0.2);
+    height: 320px; /* Slightly reduced height */
+    background: #f8fafc; /* Lighter background */
     border-radius: 20px;
     margin-bottom: 25px;
     position: relative;
@@ -2921,7 +2939,8 @@ p, label, input, select, textarea, button, span, div {
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 1px solid var(--glass-border);
+    border: 2px dashed #e2e8f0; /* Subtle dashed border */
+    transition: all 0.3s ease;
 }
 
 .analyzing-overlay {
@@ -2930,13 +2949,13 @@ p, label, input, select, textarea, button, span, div {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 10, 20, 0.7);
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.85); /* Lighter background */
+    backdrop-filter: blur(8px);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    color: white;
+    color: var(--text-main); /* Dark text */
     font-weight: 600;
     z-index: 10;
     animation: fadeIn 0.3s ease;
@@ -2978,7 +2997,7 @@ p, label, input, select, textarea, button, span, div {
     height: 60%;
     border: 2px solid var(--primary);
     border-radius: 10px;
-    box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 0 1000px rgba(15, 23, 42, 0.2); /* Lighter shadow */
     z-index: 1;
 }
 
@@ -3018,11 +3037,11 @@ p, label, input, select, textarea, button, span, div {
 .manual-barcode-input {
     display: flex;
     gap: 10px;
-    padding: 10px;
-    margin-top: 15px;
-    background: #f8fafc; /* Changed from semi-transparent white */
-    border: 1px solid var(--glass-border);
-    border-radius: 12px;
+    padding: 12px;
+    margin-top: 20px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
 }
 
 .manual-barcode-input input {
@@ -3162,7 +3181,6 @@ p, label, input, select, textarea, button, span, div {
 }
 
 #sim-clock {
-    font-family: 'Outfit';
     font-size: 1.1rem;
     font-weight: 600;
     color: var(--primary);

@@ -588,14 +588,14 @@
                 <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 15px;">Use live camera, upload a photo, or enter the EAN/UPC barcode manually.</p>
             </div>
 
-            <form id="product-form">
-                <div id="autofill-badge" class="autofill-badge" style="display: none; margin-bottom: 25px;">
+            <form id="product-form" style="margin-top: 10px;">
+                <div id="autofill-badge" class="autofill-badge" style="display: none; margin-bottom: 30px;">
                     <i class="fas fa-magic"></i> Auto-filled using AI
                 </div>
 
                 <!-- Section: Basic Information -->
                 <div class="form-section-title">Product Basics</div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 35px;">
                     <div class="form-group" style="grid-column: span 2;">
                         <label>Product Name</label>
                         <input type="text" id="prod-name" placeholder="e.g. MacBook Pro, Samsung Fridge" required>
@@ -625,7 +625,7 @@
 
                 <!-- Section: Usage & Life -->
                 <div class="form-section-title">Lifecycle & Usage</div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 10px;">
                     <div class="form-group">
                         <label>Purchase Date</label>
                         <input type="date" id="prod-date" required>
@@ -653,9 +653,9 @@
                     </div>
                 </div>
 
-                <div style="display: flex; gap:15px; margin-top: 30px;">
-                    <button type="submit" class="btn btn-primary btn-block">Add Product</button>
-                    <button type="button" class="btn" id="close-modal" style="background: rgba(255,255,255,0.05);">Cancel</button>
+                <div style="display: flex; justify-content: flex-end; align-items: center; gap: 20px; margin-top: 45px; border-top: 1px solid #f1f5f9; padding-top: 30px;">
+                    <button type="button" class="btn" id="close-modal" style="background: transparent; color: var(--text-muted); font-weight: 500; min-width: auto; padding: 10px 20px; border: none;">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="min-width: 180px; padding: 14px 35px; font-weight: 600; border-radius: 14px;">Add Product</button>
                 </div>
             </form>
         </div>
