@@ -80,11 +80,11 @@ const clientPath = path.join(__dirname, 'client');
 if (fs.existsSync(publicPath)) {
     console.log('[Static] Serving from public folder');
     app.use(express.static(publicPath));
-    app.get('*', (req, res) => res.sendFile(path.join(publicPath, 'index.html')));
+    app.get('(.*)', (req, res) => res.sendFile(path.join(publicPath, 'index.html')));
 } else if (fs.existsSync(clientPath)) {
     console.log('[Static] Serving from client folder');
     app.use(express.static(clientPath));
-    app.get('*', (req, res) => res.sendFile(path.join(clientPath, 'index.html')));
+    app.get('(.*)', (req, res) => res.sendFile(path.join(clientPath, 'index.html')));
 } else {
     console.warn('[Static] Warning: Neither "public" nor "client" folder found!');
 }
