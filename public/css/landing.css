@@ -385,16 +385,20 @@
 
 #typewriter-text {
     display: inline-block;
-    min-width: 200px; /* Longest word approx width to prevent shift */
+    min-width: 200px;
     text-align: left;
-    color: #fff;
+    background: linear-gradient(135deg, #ffffff 0%, #93c5fd 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     vertical-align: bottom;
+    font-weight: 700;
 }
 
 .typewriter-cursor::after {
     content: '|';
     margin-left: 4px;
     font-weight: 300;
+    color: #93c5fd;
     animation: typewriter-blink 1s infinite;
 }
 
