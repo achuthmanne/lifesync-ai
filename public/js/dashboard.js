@@ -210,6 +210,44 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (event.target == chatModal) closeChat();
     });
 
+    // Typewriter effect for Final CTA
+    const typewriter = document.getElementById('typewriter-text');
+    if (typewriter) {
+        const words = ["smarter", "faster", "intelligently", "effortlessly"];
+        let wordIndex = 0;
+        let charIndex = words[0].length;
+        let isDeleting = false;
+        let typeSpeed = 100;
+
+        const type = () => {
+            const currentWord = words[wordIndex];
+            
+            if (isDeleting) {
+                typewriter.textContent = currentWord.substring(0, charIndex - 1);
+                charIndex--;
+                typeSpeed = 50;
+            } else {
+                typewriter.textContent = currentWord.substring(0, charIndex + 1);
+                charIndex++;
+                typeSpeed = 120;
+            }
+
+            if (!isDeleting && charIndex === currentWord.length) {
+                isDeleting = true;
+                typeSpeed = 2500; // Hold full word
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                wordIndex = (wordIndex + 1) % words.length;
+                typeSpeed = 500; // Pause before typing next
+            }
+
+            setTimeout(type, typeSpeed);
+        };
+        
+        // Initial delay before first deletion
+        setTimeout(type, 2000);
+    }
+
     // Auth Check
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user'));
@@ -2837,42 +2875,5 @@ document.addEventListener('DOMContentLoaded', async () => {
     api.warranties.getAll().then(res => allWarranties = res.data);
     loadNotifications(false); // Load in background to show badge
 
-    // Typewriter effect for Final CTA
-    const typewriter = document.getElementById('typewriter-text');
-    if (typewriter) {
-        const words = ["smarter", "faster", "intelligently", "effortlessly"];
-        let wordIndex = 0;
-        let charIndex = words[0].length;
-        let isDeleting = false;
-        let typeSpeed = 100;
-
-        const type = () => {
-            const currentWord = words[wordIndex];
-            
-            if (isDeleting) {
-                typewriter.textContent = currentWord.substring(0, charIndex - 1);
-                charIndex--;
-                typeSpeed = 50;
-            } else {
-                typewriter.textContent = currentWord.substring(0, charIndex + 1);
-                charIndex++;
-                typeSpeed = 120;
-            }
-
-            if (!isDeleting && charIndex === currentWord.length) {
-                isDeleting = true;
-                typeSpeed = 2500; // Hold full word
-            } else if (isDeleting && charIndex === 0) {
-                isDeleting = false;
-                wordIndex = (wordIndex + 1) % words.length;
-                typeSpeed = 500; // Pause before typing next
-            }
-
-            setTimeout(type, typeSpeed);
-        };
-        
-        // Initial delay before first deletion
-        setTimeout(type, 2000);
-    }
 });
 
