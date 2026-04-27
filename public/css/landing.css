@@ -4,6 +4,8 @@
     background: var(--bg-main);
     color: var(--text-main);
     overflow-x: hidden;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
 }
 
 .landing-nav {
@@ -428,11 +430,18 @@
 
 /* Footer */
 .landing-footer {
-    padding: 50px 8% 20px;
+    padding: 50px 8% 0 !important;
+    margin-bottom: 0 !important;
     border-top: 1px solid rgba(0,0,0,0.05);
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    gap: 60px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+.footer-brand {
+    flex: 2;
+    min-width: 300px;
 }
 
 .footer-brand .logo {
@@ -443,6 +452,11 @@
 .footer-brand p {
     color: var(--text-muted);
     line-height: 1.6;
+}
+
+.footer-links {
+    flex: 1;
+    min-width: 150px;
 }
 
 .footer-links h4 {
@@ -469,13 +483,16 @@
 }
 
 .footer-bottom {
-    grid-column: span 3;
+    flex-basis: 100%;
     padding-top: 15px;
+    padding-bottom: 5px !important;
     margin-top: 20px;
+    margin-bottom: 0 !important;
     border-top: 1px solid var(--glass-border);
     text-align: center;
     color: var(--text-light);
     font-size: 0.9rem;
+    line-height: 1;
 }
 
 /* Animations */

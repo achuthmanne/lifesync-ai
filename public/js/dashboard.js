@@ -266,19 +266,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     currentActiveView = 'Dashboard';
 
     window.showBilling = () => {
-        const views = ['dashboard-view', 'analytics-view', 'notifications-view', 'warranty-view', 'billing-view'];
-        views.forEach(v => {
-            const el = document.getElementById(v);
-            if (el) el.style.display = 'none';
-        });
-        const billingView = document.getElementById('billing-view');
-        if (billingView) billingView.style.display = 'block';
-        
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-        const navBilling = document.getElementById('nav-billing');
-        if (navBilling) navBilling.classList.add('active');
-        
-        updateBillingUsage();
+        switchView('billing');
     };
 
     window.closeLimitModal = () => {
@@ -736,11 +724,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     const switchView = (viewName) => {
-        // Reset all views
         dashboardView.style.display = 'none';
         analyticsView.style.display = 'none';
         notificationsView.style.display = 'none';
         if (warrantyView) warrantyView.style.display = 'none';
+        const billingView = document.getElementById('billing-view');
+        if (billingView) billingView.style.display = 'none';
         
         // Reset scroll position to top for a fresh view
         const mainContent = document.querySelector('.main-content');
@@ -751,6 +740,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         navAnalytics.classList.remove('active');
         navNotifications.classList.remove('active');
         if (navWarranty) navWarranty.classList.remove('active');
+        const navBilling = document.getElementById('nav-billing');
+        if (navBilling) navBilling.classList.remove('active');
 
         if (viewName === 'dashboard') {
             currentActiveView = 'Dashboard';
@@ -772,6 +763,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (warrantyView) warrantyView.style.display = 'block';
             if (navWarranty) navWarranty.classList.add('active');
             loadWarrantyWallet();
+        } else if (viewName === 'billing') {
+            currentActiveView = 'Usage & Billing';
+            if (billingView) billingView.style.display = 'block';
+            if (navBilling) navBilling.classList.add('active');
+            updateBillingUsage();
         }
     };
 
@@ -779,6 +775,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     navAnalytics.onclick = () => switchView('analytics');
     navNotifications.onclick = () => switchView('notifications');
     if (navWarranty) navWarranty.onclick = () => switchView('warranty');
+    const navBilling = document.getElementById('nav-billing');
+    if (navBilling) navBilling.onclick = () => switchView('billing');
 
     const fullInventoryModal = document.getElementById('full-inventory-modal');
     const viewAllBtn = document.getElementById('view-all-products-btn');
