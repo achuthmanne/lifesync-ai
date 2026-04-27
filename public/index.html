@@ -166,9 +166,9 @@
             <div class="footer-links">
                 <h4>Company</h4>
                 <ul>
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="javascript:void(0)" onclick="openLegal('about')">About Us</a></li>
+                    <li><a href="javascript:void(0)" onclick="openLegal('privacy')">Privacy Policy</a></li>
+                    <li><a href="javascript:void(0)" onclick="openLegal('terms')">Terms of Service</a></li>
                 </ul>
             </div>
             <div class="footer-bottom">
@@ -1326,6 +1326,117 @@
                 }
 
                 updateMolecules();
+            }
+        });
+    </script>
+    <!-- Legal Modal -->
+    <div id="legal-modal" class="modal">
+        <div class="modal-content glass legal-glass">
+            <div class="legal-header">
+                <h3 id="legal-modal-title">Legal Information</h3>
+                <button class="close-modal-btn" onclick="closeLegalModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="legal-content-area" id="legal-content">
+                <!-- Content injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const legalData = {
+            privacy: {
+                title: 'Privacy Policy',
+                content: `
+                    <div class="legal-section">
+                        <h4>Data Collection</h4>
+                        <p>At LifeSync AI, we only collect information that helps us provide you with the best experience. This includes your email address for account management and anonymized usage data to improve our AI models.</p>
+                    </div>
+                    <div class="legal-section">
+                        <h4>Security First</h4>
+                        <p>Your data is encrypted both in transit and at rest. We use industry-standard security protocols to ensure your personal information remains safe from unauthorized access.</p>
+                    </div>
+                    <div class="legal-section">
+                        <h4>No Data Selling</h4>
+                        <p>We believe your data belongs to you. We never sell, rent, or trade your personal information with third parties for marketing purposes. Period.</p>
+                    </div>
+                    <div class="legal-section">
+                        <h4>Your Rights</h4>
+                        <p>You have the right to access, update, or delete your data at any time through your account settings or by contacting our support team.</p>
+                    </div>
+                `
+            },
+            terms: {
+                title: 'Terms of Service',
+                content: `
+                    <div class="legal-section">
+                        <h4>Responsible Use</h4>
+                        <p>By using LifeSync AI, you agree to use the platform responsibly and ethically. Our tools are designed to empower your productivity and personal growth.</p>
+                    </div>
+                    <div class="legal-section">
+                        <h4>Prohibited Activities</h4>
+                        <p>Users may not use the service for any illegal activities, attempt to bypass security measures, or use the AI engines to generate harmful or malicious content.</p>
+                    </div>
+                    <div class="legal-section">
+                        <h4>Service Updates</h4>
+                        <p>We are constantly evolving. LifeSync AI reserves the right to update, change, or discontinue features of the service at any time to improve the platform.</p>
+                    </div>
+                    <div class="legal-section">
+                        <h4>Account Responsibility</h4>
+                        <p>You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.</p>
+                    </div>
+                `
+            },
+            about: {
+                title: 'About LifeSync AI',
+                content: `
+                    <div class="legal-section">
+                        <h4>Our Mission</h4>
+                        <p>LifeSync AI is an intelligent productivity and life tracking platform designed to harmonize your digital and physical worlds. We believe that with the right insights, everyone can achieve their peak potential.</p>
+                    </div>
+                    <div class="legal-section">
+                        <h4>AI-Powered Insights</h4>
+                        <p>By leveraging advanced models like Gemini and Groq, we provide deep lifecycle analysis for your assets and personalized growth strategies for your habits.</p>
+                    </div>
+                    <div class="legal-section">
+                        <h4>Growth & Harmony</h4>
+                        <p>Whether you're tracking product warranties or building new routines, LifeSync AI is your companion in the journey towards a more organized and fulfilling life.</p>
+                    </div>
+                    <div class="legal-section">
+                        <h4>Join the Future</h4>
+                        <p>We're more than just a dashboard; we're a new way of interacting with the objects and goals that matter most to you. Welcome to the future of personal management.</p>
+                    </div>
+                `
+            }
+        };
+
+        function openLegal(type) {
+            const data = legalData[type];
+            if (!data) return;
+
+            document.getElementById('legal-modal-title').innerText = data.title;
+            document.getElementById('legal-content').innerHTML = data.content;
+            const modal = document.getElementById('legal-modal');
+            modal.style.display = 'flex';
+            
+            // Trigger animation
+            setTimeout(() => {
+                modal.classList.add('active');
+            }, 10);
+        }
+
+        function closeLegalModal() {
+            const modal = document.getElementById('legal-modal');
+            modal.classList.remove('active');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+
+        // Close on outside click
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('legal-modal');
+            if (event.target == modal) {
+                closeLegalModal();
             }
         });
     </script>
