@@ -374,7 +374,7 @@
     background: linear-gradient(135deg, var(--primary) 0%, #1e4ed8 100%);
     color: white;
     border-radius: 40px;
-    margin: 60px 8%;
+    margin: 60px 8% 30px;
 }
 
 .final-cta h2 {
@@ -422,8 +422,8 @@
 
 /* Footer */
 .landing-footer {
-    padding: 80px 8% 15px;
-    border-top: 1px solid var(--glass-border);
+    padding: 60px 8% 15px;
+    border-top: 1px solid rgba(0,0,0,0.05);
     display: grid;
     grid-template-columns: 2fr 1fr 1fr;
     gap: 60px;
