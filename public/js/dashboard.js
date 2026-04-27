@@ -225,7 +225,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    let currentActiveView = 'Dashboard';
+    currentActiveView = 'Dashboard';
 
     window.showBilling = () => {
         const views = ['dashboard-view', 'analytics-view', 'notifications-view', 'warranty-view', 'billing-view'];
