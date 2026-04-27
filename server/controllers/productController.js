@@ -3,6 +3,7 @@ const aiService = require('../services/aiService');
 const notificationService = require('../services/notificationService');
 const monitoringService = require('../services/monitoringService');
 const timeService = require('../services/timeService');
+const User = require('../models/User');
 
 // @desc    Get all products
 // @route   GET /api/products
@@ -48,6 +49,9 @@ exports.createProduct = async (req, res) => {
     try {
         req.body.user = req.user.id;
         const product = await Product.create(req.body);
+        
+        // Update user usage
+        await User.findByIdAndUpdate(req.user.id, { $inc: { 'usage.products': 1 } });
         
         // Trigger AI analysis asynchronously for immediate UI feedback
         aiService.analyzeProduct(product.id).catch(err => console.error('AI Analysis Error:', err));
@@ -113,6 +117,8 @@ exports.deleteProduct = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Product not found' });
         }
         await product.deleteOne();
+        // Update user usage
+        await User.findByIdAndUpdate(req.user.id, { $inc: { 'usage.products': -1 } });
         res.status(200).json({ success: true, data: {} });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });

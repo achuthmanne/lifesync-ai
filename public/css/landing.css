@@ -617,6 +617,128 @@
     width: 100%;
 }
 
+/* Pricing Section */
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-top: 50px;
+}
+
+.pricing-card {
+    padding: 50px 35px;
+    text-align: center;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #ffffff !important;
+}
+
+.pricing-card.popular {
+    border: 2px solid var(--primary) !important;
+    transform: scale(1.05);
+    z-index: 10;
+    box-shadow: 0 25px 50px -12px rgba(59, 130, 246, 0.15);
+}
+
+.popular-badge {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--primary);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.pricing-header h3 {
+    font-size: 1.5rem;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+}
+
+.pricing-header .price {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 15px;
+}
+
+.pricing-header .price span {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+.pricing-header p {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+.pricing-features {
+    list-style: none;
+    text-align: left;
+    margin-bottom: 40px;
+    flex-grow: 1;
+}
+
+.pricing-features li {
+    padding: 12px 0;
+    font-size: 0.95rem;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.pricing-features li.muted {
+    color: var(--text-light);
+    opacity: 0.6;
+}
+
+.pricing-features i.fa-check {
+    color: var(--accent);
+}
+
+.pricing-features i.fa-times {
+    color: var(--danger);
+}
+
+.pricing-card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-lg);
+}
+
+.pricing-card.popular:hover {
+    transform: scale(1.05) translateY(-10px);
+}
+
+@media (max-width: 1024px) {
+    .pricing-grid {
+        grid-template-columns: 1fr;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+        gap: 50px;
+    }
+    
+    .pricing-card.popular {
+        transform: none;
+    }
+    
+    .pricing-card.popular:hover {
+        transform: translateY(-10px);
+    }
+}
+
+
 @media (max-width: 640px) {
     .legal-glass {
         padding: 30px 20px !important;

@@ -182,6 +182,48 @@ exports.resetPassword = async (req, res) => {
     }
 };
 
+// @desc    Upgrade Plan
+// @route   PUT /api/auth/upgrade
+// @access  Private
+exports.upgradePlan = async (req, res) => {
+    try {
+        const { plan } = req.body;
+        const user = await User.findById(req.user.id);
+        
+        if (!['free', 'pro', 'premium'].includes(plan)) {
+            return res.status(400).json({ success: false, message: 'Invalid plan selected' });
+        }
+
+        let limits = {
+            products: 5,
+            aiRequests: 10,
+            storage: 52428800 // 50MB
+        };
+
+        if (plan === 'pro') {
+            limits = {
+                products: 100,
+                aiRequests: 200,
+                storage: 1073741824 // 1GB
+            };
+        } else if (plan === 'premium') {
+            limits = {
+                products: 9999,
+                aiRequests: 9999,
+                storage: 10737418240 // 10GB
+            };
+        }
+
+        user.plan = plan;
+        user.limits = limits;
+        await user.save();
+
+        res.status(200).json({ success: true, data: user });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
 // @desc    Get current user
 // @route   GET /api/auth/me
 // @access  Private

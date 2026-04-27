@@ -129,6 +129,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 let provider = res.data.provider;
                 let suggestions = [];
 
+                if (res.data.limitReached) {
+                    showLimitReached('aiRequests');
+                }
+
                 const suggestRegex = /\[?\s*SUGGESTIONS:\s*(.*?)\]?\s*$/i;
                 const suggestMatch = aiText.match(suggestRegex);
                 if (suggestMatch) {
@@ -221,7 +225,79 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    currentActiveView = 'Dashboard';
+    let currentActiveView = 'Dashboard';
+
+    window.showBilling = () => {
+        const views = ['dashboard-view', 'analytics-view', 'notifications-view', 'warranty-view', 'billing-view'];
+        views.forEach(v => {
+            const el = document.getElementById(v);
+            if (el) el.style.display = 'none';
+        });
+        const billingView = document.getElementById('billing-view');
+        if (billingView) billingView.style.display = 'block';
+        
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        const navBilling = document.getElementById('nav-billing');
+        if (navBilling) navBilling.classList.add('active');
+        
+        updateBillingUsage();
+    };
+
+    window.closeLimitModal = () => {
+        const modal = document.getElementById('limit-modal');
+        if (modal) modal.style.display = 'none';
+    };
+
+    window.showLimitReached = (type) => {
+        const modal = document.getElementById('limit-modal');
+        const msg = document.getElementById('limit-modal-msg');
+        if (type === 'products') {
+            msg.innerText = "You've reached your free product limit. Upgrade to Pro for unlimited assets and deep AI insights.";
+        } else if (type === 'aiRequests') {
+            msg.innerText = "You've reached your monthly AI request limit. Upgrade to Pro to continue chatting and getting diagnostics.";
+        }
+        if (modal) modal.style.display = 'flex';
+    };
+
+    window.simulateUpgrade = async (plan) => {
+        try {
+            const res = await fetch('/api/auth/upgrade', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({ plan })
+            });
+            const data = await res.json();
+            if (data.success) {
+                localStorage.setItem('user', JSON.stringify(data.data));
+                showNotification(`Successfully upgraded to ${plan.toUpperCase()}!`, 'success');
+                if (typeof loadDashboard === 'function') loadDashboard();
+                showBilling();
+            }
+        } catch (error) {
+            showNotification('Upgrade failed. Please try again.', 'error');
+        }
+    };
+
+    const updateBillingUsage = () => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user) return;
+
+        const planName = document.getElementById('billing-plan-name');
+        if (planName) planName.textContent = user.plan.charAt(0).toUpperCase() + user.plan.slice(1);
+        
+        const prodCount = document.getElementById('billing-prod-count');
+        const prodBar = document.getElementById('billing-prod-bar');
+        if (prodCount) prodCount.textContent = `${user.usage.products} / ${user.limits.products}`;
+        if (prodBar) prodBar.style.width = `${Math.min(100, (user.usage.products / user.limits.products) * 100)}%`;
+        
+        const aiCount = document.getElementById('billing-ai-count');
+        const aiBar = document.getElementById('billing-ai-bar');
+        if (aiCount) aiCount.textContent = `${user.usage.aiRequests} / ${user.limits.aiRequests}`;
+        if (aiBar) aiBar.style.width = `${Math.min(100, (user.usage.aiRequests / user.limits.aiRequests) * 100)}%`;
+    };
 
     if (landingView) landingView.style.display = 'none';
     if (appView) appView.style.display = 'block';
@@ -751,6 +827,37 @@ document.addEventListener('DOMContentLoaded', async () => {
             const products = response.data;
             syncAppTime(response.currentTime);
             updateSimClock(appTime);
+
+            // Update Sidebar Usage
+            try {
+                const meRes = await fetch('/api/auth/me', {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                });
+                const meData = await meRes.json();
+                if (meData.success) {
+                    const latestUser = meData.data;
+                    localStorage.setItem('user', JSON.stringify(latestUser));
+                    
+                    const planName = document.getElementById('sidebar-plan-name');
+                    const usageBar = document.getElementById('usage-bar-fill');
+                    const usageText = document.getElementById('usage-text');
+                    
+                    if (planName) planName.textContent = latestUser.plan.charAt(0).toUpperCase() + latestUser.plan.slice(1) + ' Plan';
+                    
+                    const limit = latestUser.limits.products;
+                    const used = latestUser.usage.products;
+                    const percent = Math.min(100, (used / limit) * 100);
+                    
+                    if (usageBar) {
+                        usageBar.style.width = `${percent}%`;
+                        if (percent >= 90) usageBar.style.background = '#ef4444';
+                        else if (percent >= 70) usageBar.style.background = '#f59e0b';
+                        else usageBar.style.background = 'var(--primary)';
+                    }
+                    if (usageText) usageText.textContent = `${used} / ${limit} Products`;
+                }
+            } catch (e) { console.error('Usage sync failed:', e); }
+
 
             // Update Stats
             document.getElementById('total-count').textContent = products.length;

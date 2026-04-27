@@ -30,7 +30,22 @@ const userSchema = new mongoose.Schema({
         default: Date.now
     },
     resetPasswordOTP: String,
-    resetPasswordExpire: Date
+    resetPasswordExpire: Date,
+    plan: {
+        type: String,
+        enum: ['free', 'pro', 'premium'],
+        default: 'free'
+    },
+    usage: {
+        products: { type: Number, default: 0 },
+        aiRequests: { type: Number, default: 0 },
+        storage: { type: Number, default: 0 } // in bytes
+    },
+    limits: {
+        products: { type: Number, default: 5 },
+        aiRequests: { type: Number, default: 10 },
+        storage: { type: Number, default: 52428800 } // 50MB in bytes
+    }
 });
 
 // Encrypt password using bcrypt

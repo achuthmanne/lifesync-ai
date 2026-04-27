@@ -60,6 +60,12 @@ const api = {
             const data = await response.json();
             
             if (!response.ok) {
+                if (response.status === 403 && data.type === 'LIMIT_REACHED') {
+                    if (typeof window.showLimitReached === 'function') {
+                        const type = endpoint.includes('products') ? 'products' : 'aiRequests';
+                        window.showLimitReached(type);
+                    }
+                }
                 throw new Error(data.message || 'Something went wrong');
             }
             
@@ -76,7 +82,8 @@ const api = {
         getMe: () => api.request('/auth/me'),
         googleLogin: (credential) => api.request('/auth/google', 'POST', { credential }, false),
         forgotPassword: (email) => api.request('/auth/forgotpassword', 'POST', { email }, false),
-        resetPassword: (data) => api.request('/auth/resetpassword', 'POST', data, false)
+        resetPassword: (data) => api.request('/auth/resetpassword', 'POST', data, false),
+        upgrade: (plan) => api.request('/auth/upgrade', 'PUT', { plan })
     },
 
     products: {
