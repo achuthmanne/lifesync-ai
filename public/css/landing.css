@@ -383,6 +383,27 @@
     letter-spacing: -1px;
 }
 
+#typewriter-text {
+    display: inline-block;
+    min-width: 200px; /* Longest word approx width to prevent shift */
+    text-align: left;
+    color: #fff;
+    vertical-align: bottom;
+}
+
+.typewriter-cursor::after {
+    content: '|';
+    margin-left: 4px;
+    font-weight: 300;
+    animation: typewriter-blink 1s infinite;
+}
+
+@keyframes typewriter-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+
 .final-cta p {
     font-size: 1.2rem;
     margin-bottom: 40px;
@@ -750,14 +771,3 @@
     }
 }
 
-/* Typewriter Cursor */
-#typewriter-hero {
-    border-right: 3px solid var(--primary);
-    padding-right: 5px;
-    animation: typewriter-cursor 0.7s infinite;
-}
-
-@keyframes typewriter-cursor {
-    0%, 100% { border-color: transparent; }
-    50% { border-color: var(--primary); }
-}

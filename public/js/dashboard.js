@@ -2837,41 +2837,42 @@ document.addEventListener('DOMContentLoaded', async () => {
     api.warranties.getAll().then(res => allWarranties = res.data);
     loadNotifications(false); // Load in background to show badge
 
-    // Hero Typewriter Animation
-    const typewriterEl = document.getElementById('typewriter-hero');
-    if (typewriterEl) {
+    // Typewriter effect for Final CTA
+    const typewriter = document.getElementById('typewriter-text');
+    if (typewriter) {
         const words = ["smarter", "faster", "intelligently", "effortlessly"];
         let wordIndex = 0;
-        let charIndex = 0;
+        let charIndex = words[0].length;
         let isDeleting = false;
-        let typeSpeed = 150;
+        let typeSpeed = 100;
 
         const type = () => {
             const currentWord = words[wordIndex];
+            
             if (isDeleting) {
-                typewriterEl.textContent = currentWord.substring(0, charIndex - 1);
+                typewriter.textContent = currentWord.substring(0, charIndex - 1);
                 charIndex--;
-                typeSpeed = 100;
+                typeSpeed = 50;
             } else {
-                typewriterEl.textContent = currentWord.substring(0, charIndex + 1);
+                typewriter.textContent = currentWord.substring(0, charIndex + 1);
                 charIndex++;
-                typeSpeed = 150;
+                typeSpeed = 120;
             }
 
             if (!isDeleting && charIndex === currentWord.length) {
                 isDeleting = true;
-                typeSpeed = 2000; // Pause at end
+                typeSpeed = 2500; // Hold full word
             } else if (isDeleting && charIndex === 0) {
                 isDeleting = false;
                 wordIndex = (wordIndex + 1) % words.length;
-                typeSpeed = 500; // Pause before next word
+                typeSpeed = 500; // Pause before typing next
             }
 
             setTimeout(type, typeSpeed);
         };
-
-        // Start animation after a short delay
-        setTimeout(type, 1000);
+        
+        // Initial delay before first deletion
+        setTimeout(type, 2000);
     }
 });
 
