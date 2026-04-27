@@ -215,9 +215,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (typewriter) {
         const words = ["smarter", "faster", "intelligently", "effortlessly"];
         let wordIndex = 0;
-        let charIndex = words[0].length;
+        let charIndex = 0;
         let isDeleting = false;
-        let typeSpeed = 100;
+        
+        typewriter.textContent = ''; // Start clean
 
         const type = () => {
             const currentWord = words[wordIndex];
@@ -225,27 +226,26 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (isDeleting) {
                 typewriter.textContent = currentWord.substring(0, charIndex - 1);
                 charIndex--;
-                typeSpeed = 50;
             } else {
                 typewriter.textContent = currentWord.substring(0, charIndex + 1);
                 charIndex++;
-                typeSpeed = 120;
             }
+
+            let typeSpeed = isDeleting ? 60 : 120;
 
             if (!isDeleting && charIndex === currentWord.length) {
                 isDeleting = true;
-                typeSpeed = 2500; // Hold full word
+                typeSpeed = 2500; // Hold word
             } else if (isDeleting && charIndex === 0) {
                 isDeleting = false;
                 wordIndex = (wordIndex + 1) % words.length;
-                typeSpeed = 500; // Pause before typing next
+                typeSpeed = 500;
             }
 
             setTimeout(type, typeSpeed);
         };
         
-        // Initial delay before first deletion
-        setTimeout(type, 2000);
+        setTimeout(type, 1000);
     }
 
     // Auth Check
