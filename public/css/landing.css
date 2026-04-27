@@ -68,6 +68,18 @@
     -webkit-text-fill-color: transparent;
 }
 
+@media (max-width: 1200px) {
+    .hero-content h1 {
+        font-size: 3.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 2.8rem;
+    }
+}
+
 .hero-content p {
     font-size: 1.25rem;
     color: var(--text-muted);
@@ -83,6 +95,7 @@
 
 .hero-visual {
     position: relative;
+    margin-top: -50px; /* Shifted up to balance with text */
 }
 
 .mockup-container {
