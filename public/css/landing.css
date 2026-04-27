@@ -422,7 +422,7 @@
 
 /* Footer */
 .landing-footer {
-    padding: 80px 8% 30px;
+    padding: 80px 8% 15px;
     border-top: 1px solid var(--glass-border);
     display: grid;
     grid-template-columns: 2fr 1fr 1fr;
