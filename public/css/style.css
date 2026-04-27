@@ -1533,24 +1533,26 @@ p, label, input, select, textarea, button, span, div {
 }
 
 .close-modal-btn {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
+    background: #f1f5f9;
     color: var(--text-muted);
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid var(--glass-border);
+    outline: none;
 }
 
 .close-modal-btn:hover {
-    background: #f1f5f9;
-    border-color: #cbd5e1;
-    color: var(--danger);
+    background: #fee2e2;
+    color: #ef4444;
     transform: rotate(90deg);
+    border-color: #fecaca;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);
 }
 
 .btn-danger {

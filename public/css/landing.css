@@ -579,25 +579,6 @@
     margin: 0;
 }
 
-.legal-glass .close-modal-btn {
-    background: #f1f5f9;
-    color: var(--text-muted);
-    width: 44px;
-    height: 44px;
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    border: 1px solid var(--glass-border);
-}
-
-.legal-glass .close-modal-btn:hover {
-    background: #fee2e2;
-    color: #ef4444;
-    transform: rotate(90deg);
-    border-color: #fecaca;
-}
 
 /* Link Hover Effects */
 .footer-links a {
