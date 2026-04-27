@@ -389,6 +389,7 @@
     text-align: left;
     background: linear-gradient(135deg, #ffffff 0%, #93c5fd 100%);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     vertical-align: bottom;
     font-weight: 700;
@@ -427,7 +428,7 @@
 
 /* Footer */
 .landing-footer {
-    padding: 60px 8% 15px;
+    padding: 50px 8% 20px;
     border-top: 1px solid rgba(0,0,0,0.05);
     display: grid;
     grid-template-columns: 2fr 1fr 1fr;
@@ -469,8 +470,8 @@
 
 .footer-bottom {
     grid-column: span 3;
-    padding-top: 25px;
-    margin-top: 30px;
+    padding-top: 15px;
+    margin-top: 20px;
     border-top: 1px solid var(--glass-border);
     text-align: center;
     color: var(--text-light);
