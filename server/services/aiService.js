@@ -385,6 +385,24 @@ exports.chatWithAI = async (userId, userMessage, productId, history = [], curren
             * AI CHAT: Cross-platform assistant (this chat) for troubleshooting and inventory insights.
             * AUTHENTICATION: Beautifully designed login/signup page with a dynamic "AI Molecule Physics" background.
 
+        - PRICING & PLANS (STRICT KNOWLEDGE):
+            * FREE PLAN (₹0/mo): 
+                - Limit: 5 Products.
+                - AI Power: 50 AI Insights/Requests per month.
+                - Storage: 50MB.
+                - Features: Basic lifecycle tracking and barcode identification.
+            * PRO PLAN (₹499/year - Most Popular): 
+                - Limit: Up to 100 Products.
+                - AI Power: 200 AI Insights/Requests per month.
+                - Storage: 1GB Secure Storage.
+                - Features: Advanced Analytics, Priority AI Engine, and Priority Support.
+            * PREMIUM PLAN (₹999/year): 
+                - Limit: Unlimited Products.
+                - AI Power: Unlimited AI Requests.
+                - Storage: 10GB Secure Storage.
+                - Features: Deep AI Predictions, Advanced PDF Reports, and Priority Support.
+            * VALUE PROPOSITION: All paid plans are billed yearly for maximum savings and uninterrupted protection.
+
         - GUEST ACCESS RULES (CRITICAL):
             * User is CURRENTLY A GUEST. They cannot see their own products yet.
             * If they ask about THEIR specific products, say: "As you are currently a guest, I cannot see your personal inventory. Please Login or Create an Account first so I can provide personalized insights for your products!"

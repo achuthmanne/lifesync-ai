@@ -896,6 +896,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const latestUser = meData.data;
                     localStorage.setItem('user', JSON.stringify(latestUser));
                     user = latestUser; // Update global reference
+                    updateBillingUsage(); // Refresh Billing UI if visible
                     
                     const planName = document.getElementById('sidebar-plan-name');
                     const usageBar = document.getElementById('usage-bar-fill');
