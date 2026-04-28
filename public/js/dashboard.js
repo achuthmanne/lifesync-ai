@@ -546,6 +546,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         const customSelects = document.querySelectorAll('.custom-select');
         
         customSelects.forEach(container => {
+            if (container.dataset.initialized) return;
+            container.dataset.initialized = 'true';
+
             const selected = container.querySelector('.select-selected');
             const items = container.querySelector('.select-items');
             const input = container.nextElementSibling;

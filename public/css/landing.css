@@ -430,7 +430,7 @@
 
 /* Footer */
 .landing-footer {
-    padding: 50px 8% 0 !important;
+    padding: 50px 8% 10px !important; /* Reduced bottom padding from 0 to 10px for better balance but still very tight */
     margin-bottom: 0 !important;
     border-top: 1px solid rgba(0,0,0,0.05);
     display: flex;
@@ -485,7 +485,7 @@
 .footer-bottom {
     flex-basis: 100%;
     padding-top: 15px;
-    padding-bottom: 5px !important;
+    padding-bottom: 0 !important; /* Removed the 5px padding-bottom entirely */
     margin-top: 20px;
     margin-bottom: 0 !important;
     border-top: 1px solid var(--glass-border);
