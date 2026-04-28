@@ -286,90 +286,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     window.simulateUpgrade = async (plan) => {
-        try {
-            // 1. Get Razorpay Key ID
-            const configRes = await fetch('/api/payments/config');
-            const configData = await configRes.json();
-            if (!configData.success) {
-                return showNotification('Could not load payment configuration.', 'error');
-            }
-
-            // 2. Create Order on Backend
-            const orderRes = await fetch('/api/payments/create-order', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                },
-                body: JSON.stringify({ plan })
-            });
-            const orderData = await orderRes.json();
-            
-            if (!orderData.success) {
-                return showNotification(orderData.message || 'Error creating order', 'error');
-            }
-
-            const user = JSON.parse(localStorage.getItem('user'));
-
-            // 3. Open Razorpay Checkout
-            const options = {
-                key: configData.key,
-                amount: orderData.order.amount,
-                currency: orderData.order.currency,
-                name: 'LifeSync AI',
-                description: `Upgrade to ${plan.toUpperCase()} Plan`,
-                order_id: orderData.order.id,
-                handler: async function (response) {
-                    try {
-                        // 4. Verify Payment on Backend
-                        const verifyRes = await fetch('/api/payments/verify', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${localStorage.getItem('token')}`
-                            },
-                            body: JSON.stringify({
-                                razorpay_order_id: response.razorpay_order_id,
-                                razorpay_payment_id: response.razorpay_payment_id,
-                                razorpay_signature: response.razorpay_signature,
-                                plan: plan
-                            })
-                        });
-                        
-                        const verifyData = await verifyRes.json();
-                        
-                        if (verifyData.success) {
-                            localStorage.setItem('user', JSON.stringify(verifyData.data));
-                            showNotification(`Payment Successful! Welcome to ${plan.toUpperCase()}!`, 'success');
-                            if (typeof loadDashboard === 'function') loadDashboard();
-                            showBilling();
-                        } else {
-                            showNotification(verifyData.message || 'Payment verification failed', 'error');
-                        }
-                    } catch (err) {
-                        showNotification('Error verifying payment.', 'error');
-                    }
-                },
-                prefill: {
-                    name: user.name,
-                    email: user.email
-                },
-                theme: {
-                    color: '#3b82f6'
-                }
-            };
-
-            const rzp = new Razorpay(options);
-            
-            rzp.on('payment.failed', function (response){
-                showNotification('Payment failed or was cancelled.', 'error');
-            });
-            
-            rzp.open();
-
-        } catch (error) {
-            console.error(error);
-            showNotification('Could not initialize payment.', 'error');
+        if (window.PaymentService) {
+            window.PaymentService.handleUpgrade(plan);
+        } else {
+            console.error("PaymentService not initialized");
+            showNotification('Payment system is loading, please try again.', 'error');
         }
     };
 

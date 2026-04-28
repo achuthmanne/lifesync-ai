@@ -45,6 +45,13 @@ const userSchema = new mongoose.Schema({
         products: { type: Number, default: 5 },
         aiRequests: { type: Number, default: 10 },
         storage: { type: Number, default: 52428800 } // 50MB in bytes
+    },
+    subscription: {
+        status: { type: String, enum: ['active', 'inactive', 'past_due'], default: 'inactive' },
+        razorpayOrderId: String,
+        razorpayPaymentId: String,
+        lastPaymentDate: Date,
+        expiryDate: Date
     }
 });
 

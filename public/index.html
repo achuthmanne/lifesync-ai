@@ -6,10 +6,12 @@
     <meta name="description" content="Manage your products lifecycle with advanced AI insights from OpenAI, Gemini, and Groq.">
     <title>LifeSync AI | Product Lifecycle Dashboard</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css?v=1.1">
     <link rel="stylesheet" href="css/landing.css">
     <link rel="stylesheet" href="css/warranty.css">
+    <link rel="stylesheet" href="css/billing.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -1298,6 +1300,31 @@
 
     </div> <!-- End app-view -->
 
+    <!-- Production SaaS Billing Modals -->
+    <div id="billing-confirmation-modal" class="billing-modal-overlay">
+        <div class="billing-card">
+            <div class="logo" style="margin-bottom: 20px;"><i class="fas fa-sync-alt"></i> LifeSync AI</div>
+            <h3 style="color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem;">Confirm Your Upgrade</h3>
+            <h2 id="billing-plan-title">Pro Plan</h2>
+            <div id="billing-plan-amount" class="billing-plan-price">₹499<span>/lifetime</span></div>
+            
+            <div id="billing-plan-features" class="billing-features">
+                <!-- Features populated by JS -->
+            </div>
+
+            <div id="billing-loader" class="billing-loader"></div>
+            
+            <button id="billing-confirm-btn" class="billing-action-btn">Proceed to Secure Payment</button>
+            <p style="margin-top: 15px; font-size: 0.8rem; color: #64748b; cursor: pointer;" onclick="closeBillingModal()">Cancel and go back</p>
+        </div>
+    </div>
+
+    <div id="payment-feedback-modal" class="payment-feedback-modal">
+        <div class="payment-feedback-icon"></div>
+        <h3 style="color: #f8fafc; margin-bottom: 10px;">Payment Successful</h3>
+        <p style="color: #94a3b8; font-size: 0.9rem;">Your account is being upgraded...</p>
+    </div>
+
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
@@ -1305,6 +1332,7 @@
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
+    <script src="js/paymentService.js"></script>
     <script src="js/dashboard.js"></script>
     <script>
         // Landing Page Visual Engines
