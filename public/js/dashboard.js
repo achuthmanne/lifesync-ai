@@ -399,7 +399,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Socket Initialization
     const socket = io();
     socket.on('connect', () => {
-        socket.emit('authenticate', user.id);
+        const userId = user._id || user.id;
+        socket.emit('authenticate', userId);
     });
 
     socket.on('product_update', (updatedProduct) => {
