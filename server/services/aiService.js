@@ -3,6 +3,7 @@ const { OpenAI } = require("openai");
 const Groq = require("groq-sdk");
 const { CohereClient } = require("cohere-ai");
 const Product = require('../models/Product');
+const User = require('../models/User');
 const socketIO = require('../sockets/socketHandler');
 const notificationService = require('../services/notificationService');
 const timeService = require('./timeService');
@@ -352,11 +353,23 @@ exports.analyzeProduct = async (productId, useHeuristicOnly = false) => {
 
 exports.chatWithAI = async (userId, userMessage, productId, history = [], currentScreen = 'Dashboard') => {
     try {
-        let fullContext = "";
+        let userContext = "";
         let isGuest = !userId;
 
         if (!isGuest) {
+            const user = await User.findById(userId);
             const allProducts = await Product.find({ user: userId });
+            
+            if (user) {
+                userContext = `
+                CURRENT USER STATUS:
+                - Plan: ${user.plan.toUpperCase()}
+                - Products Used: ${user.usage.products} / ${user.limits.products}
+                - AI Insights Used: ${user.usage.aiRequests} / ${user.limits.aiRequests}
+                - Storage Used: ${(user.usage.storage / (1024 * 1024)).toFixed(2)} MB / ${(user.limits.storage / (1024 * 1024)).toFixed(2)} MB
+                `;
+            }
+
             if (allProducts.length > 0) {
                 const productSummary = allProducts.map(p => 
                     `- ${p.name}: Health ${p.healthScore}%, Risk ${p.aiInsights.riskLevel}`
@@ -373,6 +386,8 @@ exports.chatWithAI = async (userId, userMessage, productId, history = [], curren
         const systemPrompt = `STRICT ROLE & KNOWLEDGE:
         - You are the LifeSync AI Assistant, an expert in product lifecycle management and the LifeSync platform.
         - YOUR GOAL: Help users understand how LifeSync AI works and persuade them to sign up if they haven't already.
+
+        ${userContext}
 
         - LANDING PAGE KNOWLEDGE BASE:
             * WHAT IS LIFESYNC: An AI-powered platform to track, manage, and extend the life of your physical products.
