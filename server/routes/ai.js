@@ -23,6 +23,13 @@ router.post('/chat', async (req, res) => {
                 // Check limit if logged in
                 const User = require('../models/User');
                 const user = await User.findById(userId);
+                
+                // Self-healing: Update old free limits
+                if (user && user.plan === 'free' && user.limits.aiRequests < 50) {
+                    user.limits.aiRequests = 50;
+                    await user.save();
+                }
+
                 if (user && user.usage.aiRequests >= user.limits.aiRequests) {
                     return res.status(200).json({ 
                         success: true, 

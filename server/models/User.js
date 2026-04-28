@@ -43,7 +43,7 @@ const userSchema = new mongoose.Schema({
     },
     limits: {
         products: { type: Number, default: 5 },
-        aiRequests: { type: Number, default: 10 },
+        aiRequests: { type: Number, default: 50 },
         storage: { type: Number, default: 52428800 } // 50MB in bytes
     },
     subscription: {

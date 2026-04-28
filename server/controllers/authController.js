@@ -196,7 +196,7 @@ exports.upgradePlan = async (req, res) => {
 
         let limits = {
             products: 5,
-            aiRequests: 10,
+            aiRequests: 50,
             storage: 52428800 // 50MB
         };
 
@@ -229,7 +229,14 @@ exports.upgradePlan = async (req, res) => {
 // @access  Private
 exports.getMe = async (req, res) => {
     try {
-        const user = await User.findById(req.user.id);
+        let user = await User.findById(req.user.id);
+        
+        // Self-healing: Update old free limits for existing users
+        if (user.plan === 'free' && user.limits.aiRequests < 50) {
+            user.limits.aiRequests = 50;
+            await user.save();
+        }
+
         res.status(200).json({ success: true, data: user });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
