@@ -13,7 +13,7 @@ const PLAN_PRICES = {
 };
 
 const PLAN_LIMITS = {
-    free: { products: 5, aiRequests: 10, storage: 52428800 },
+    free: { products: 5, aiRequests: 50, storage: 52428800 },
     pro: { products: 100, aiRequests: 200, storage: 1073741824 },
     premium: { products: 999999, aiRequests: 999999, storage: 10737418240 }
 };
