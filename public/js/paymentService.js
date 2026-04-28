@@ -31,11 +31,13 @@ const PaymentService = {
             pro: {
                 title: 'Pro Plan',
                 price: '499',
+                period: 'Year',
                 features: ['100 Product Slots', '200 AI Analysis/mo', '1GB Secure Storage', 'Priority AI Engine']
             },
             premium: {
                 title: 'Premium Plan',
                 price: '999',
+                period: 'Year',
                 features: ['Unlimited Products', 'Unlimited AI Analysis', '10GB Secure Storage', 'Advanced PDF Reports']
             }
         };
@@ -43,12 +45,19 @@ const PaymentService = {
         const selected = plans[plan];
         if (!selected) return;
 
+        const card = modal.querySelector('.billing-card');
+        if (plan === 'premium') {
+            card.classList.add('is-premium');
+        } else {
+            card.classList.remove('is-premium');
+        }
+
         // Populate Modal
         planNameDisp.textContent = selected.title;
-        planPriceDisp.innerHTML = `₹${selected.price}<span>/lifetime</span>`;
+        planPriceDisp.innerHTML = `₹${selected.price}<span>/${selected.period.toLowerCase()}</span>`;
         planFeaturesDisp.innerHTML = selected.features.map(f => `
             <div class="billing-feature-item">
-                <i class="fas fa-check-circle"></i>
+                <i class="fas fa-check-circle" style="color: #22c55e;"></i>
                 <span>${f}</span>
             </div>
         `).join('');
@@ -59,15 +68,16 @@ const PaymentService = {
         // Bind Confirm Action
         btn.onclick = async () => {
             btn.disabled = true;
-            loader.style.display = 'block';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Initializing...';
             
             try {
                 await this.executePayment(plan);
             } catch (err) {
+                console.error('Payment Error:', err);
                 this.showFeedback('error', 'Payment Initialization Failed');
             } finally {
                 btn.disabled = false;
-                loader.style.display = 'none';
+                btn.textContent = 'Confirm & Pay';
             }
         };
     },
@@ -95,8 +105,8 @@ const PaymentService = {
                 amount: orderData.order.amount,
                 currency: orderData.order.currency,
                 name: 'LifeSync AI',
-                description: `Upgrade to ${plan.toUpperCase()}`,
-                image: '/img/logo-blue.png', // Ensure this exists or use a generic icon
+                description: `Upgrade to ${plan.charAt(0).toUpperCase() + plan.slice(1)} (1 Year Access)`,
+                image: window.location.origin + '/assets/logo.png', // Absolute Brand Logo URL
                 order_id: orderData.order.id,
                 handler: async (response) => {
                     await this.verifyPayment(response, plan);
@@ -106,16 +116,20 @@ const PaymentService = {
                     email: user.email,
                 },
                 notes: {
-                    userId: user._id,
-                    plan: plan
+                    userId: user._id || user.id,
+                    plan: plan,
+                    type: 'subscription_upgrade'
                 },
                 theme: {
-                    color: '#2563eb'
+                    color: '#2563eb', // LifeSync Primary Blue
+                    backdrop_color: '#0f172a' // Dark Navy
                 },
                 modal: {
                     ondismiss: () => {
-                        this.showFeedback('info', 'Payment cancelled by user');
-                    }
+                        this.showFeedback('info', 'Checkout closed');
+                    },
+                    escape: false,
+                    confirm_close: true
                 }
             };
 
@@ -166,22 +180,26 @@ const PaymentService = {
     showFeedback(type, message) {
         const feedback = document.getElementById('payment-feedback-modal');
         const icon = feedback.querySelector('.payment-feedback-icon');
-        const msg = feedback.querySelector('h3');
+        const title = feedback.querySelector('h3');
+        const desc = feedback.querySelector('p');
 
         feedback.style.display = 'block';
-        msg.textContent = message;
+        desc.textContent = message;
 
         if (type === 'success') {
-            icon.innerHTML = '<i class="fas fa-check-circle payment-success-icon"></i>';
+            icon.className = 'payment-feedback-icon fas fa-check-circle payment-success-icon';
+            title.textContent = 'Success';
         } else if (type === 'error') {
-            icon.innerHTML = '<i class="fas fa-times-circle payment-error-icon"></i>';
+            icon.className = 'payment-feedback-icon fas fa-times-circle payment-error-icon';
+            title.textContent = 'Failed';
         } else {
-            icon.innerHTML = '<i class="fas fa-info-circle" style="color: #3b82f6"></i>';
+            icon.className = 'payment-feedback-icon fas fa-info-circle payment-info-icon';
+            title.textContent = 'Notice';
         }
 
         setTimeout(() => {
             feedback.style.display = 'none';
-        }, 3000);
+        }, 3500);
     }
 };
 

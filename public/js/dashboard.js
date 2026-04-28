@@ -298,9 +298,41 @@ document.addEventListener('DOMContentLoaded', async () => {
         const user = JSON.parse(localStorage.getItem('user'));
         if (!user) return;
 
+        // Plan Name
         const planName = document.getElementById('billing-plan-name');
         if (planName) planName.textContent = user.plan.charAt(0).toUpperCase() + user.plan.slice(1);
         
+        // Plan Description
+        const planDesc = document.getElementById('billing-plan-desc');
+        if (planDesc) {
+            if (user.plan === 'free') {
+                planDesc.textContent = "Standard features with entry-level limits.";
+            } else if (user.plan === 'pro') {
+                planDesc.textContent = "Professional features for serious asset tracking.";
+            } else if (user.plan === 'premium') {
+                planDesc.textContent = "Enterprise-grade protection and unlimited AI.";
+            }
+        }
+
+        // Renewal Date Handling
+        const renewalDate = document.getElementById('billing-renewal-date');
+        const renewalDesc = document.getElementById('billing-renewal-desc');
+        const renewalCard = document.getElementById('billing-renewal-card');
+
+        if (user.plan === 'free') {
+            if (renewalDate) renewalDate.textContent = "None";
+            if (renewalDesc) renewalDesc.textContent = "Free Forever";
+        } else if (user.subscription && user.subscription.expiryDate) {
+            const expiry = new Date(user.subscription.expiryDate);
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            if (renewalDate) renewalDate.textContent = expiry.toLocaleDateString(undefined, options);
+            if (renewalDesc) renewalDesc.textContent = user.plan === 'premium' ? "Billed Yearly" : "Billed Monthly";
+        } else {
+            if (renewalDate) renewalDate.textContent = "Processing...";
+            if (renewalDesc) renewalDesc.textContent = "Subscription Active";
+        }
+
+        // Usage Progress Bars
         const prodCount = document.getElementById('billing-prod-count');
         const prodBar = document.getElementById('billing-prod-bar');
         if (prodCount) prodCount.textContent = `${user.usage.products} / ${user.limits.products}`;

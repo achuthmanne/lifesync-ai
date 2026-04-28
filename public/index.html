@@ -634,10 +634,10 @@
                             <div class="value" id="billing-plan-name" style="color: var(--primary);">Free</div>
                             <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 5px;" id="billing-plan-desc">Standard features with entry-level limits.</p>
                         </div>
-                        <div class="stat-card glass">
+                        <div class="stat-card glass" id="billing-renewal-card">
                             <h3>Next Renewal</h3>
-                            <div class="value" style="font-size: 1.5rem;">May 27, 2026</div>
-                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 5px;">Billed Monthly</p>
+                            <div class="value" id="billing-renewal-date" style="font-size: 1.5rem;">None</div>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 5px;" id="billing-renewal-desc">Billed Monthly</p>
                         </div>
                     </div>
 
@@ -665,14 +665,31 @@
                                 </div>
                             </div>
                             
-                            <div style="margin-top: 60px; text-align: center; border-top: 1px solid #f1f5f9; padding-top: 50px;">
-                                <h3 style="margin-bottom: 15px; font-size: 1.5rem;">Ready to scale?</h3>
-                                <p style="color: var(--text-muted); margin-bottom: 35px;">Upgrade to unlock unlimited potential and deep multi-engine intelligence.</p>
-                                <div style="display: flex; gap: 20px; justify-content: center;">
-                                    <button class="btn btn-primary" style="padding: 15px 35px; width: auto;" onclick="simulateUpgrade('pro')">Upgrade to Pro</button>
-                                    <button class="btn btn-outline" style="padding: 15px 35px; width: auto;" onclick="simulateUpgrade('premium')">Go Premium</button>
+                            <div class="billing-upgrade-cta" style="margin-top: 60px; text-align: center; border-top: 1px solid #f1f5f9; padding-top: 50px;">
+                                <div style="display: inline-flex; align-items: center; gap: 10px; background: rgba(37, 99, 235, 0.1); color: var(--primary); padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; font-weight: 600; margin-bottom: 20px;">
+                                    <i class="fas fa-rocket"></i> UNLOCK FULL POTENTIAL
                                 </div>
-                                <p style="font-size: 0.8rem; color: var(--text-light); margin-top: 25px;">Note: This is a simulation. No real payments will be processed.</p>
+                                <h3 style="margin-bottom: 15px; font-size: 1.8rem; font-weight: 700;">Elevate your Experience</h3>
+                                <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 40px; line-height: 1.6;">Join 10,000+ users who have upgraded to Pro to unlock unlimited AI diagnostics, enterprise-grade security, and deeper product health insights.</p>
+                                
+                                <div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 40px;">
+                                    <div class="upgrade-option-card glass" style="padding: 25px; border-radius: 16px; width: 280px; text-align: left; background: #fff;">
+                                        <h4 style="margin-bottom: 10px; font-size: 1.1rem;">Pro Plan</h4>
+                                        <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 15px;">₹499<span style="font-size: 0.9rem; color: var(--text-muted); font-weight: 400;">/year</span></div>
+                                        <button class="btn btn-primary w-100" onclick="simulateUpgrade('pro')">Get Started</button>
+                                    </div>
+                                    <div class="upgrade-option-card glass" style="padding: 25px; border-radius: 16px; width: 280px; text-align: left; background: linear-gradient(135deg, #1e293b, #0f172a); color: #fff;">
+                                        <h4 style="margin-bottom: 10px; font-size: 1.1rem; color: #60a5fa;">Premium</h4>
+                                        <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 15px;">₹999<span style="font-size: 0.9rem; color: #94a3b8; font-weight: 400;">/year</span></div>
+                                        <button class="btn btn-primary w-100" style="background: #3b82f6;" onclick="simulateUpgrade('premium')">Go Premium</button>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; justify-content: center; gap: 30px; color: var(--text-muted); font-size: 0.85rem;">
+                                    <span><i class="fas fa-shield-check" style="color: #22c55e;"></i> Secure SSL Payment</span>
+                                    <span><i class="fas fa-undo" style="color: #22c55e;"></i> 7-Day Money Back</span>
+                                    <span><i class="fas fa-headset" style="color: #22c55e;"></i> 24/7 Priority Support</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1303,26 +1320,26 @@
     <!-- Production SaaS Billing Modals -->
     <div id="billing-confirmation-modal" class="billing-modal-overlay">
         <div class="billing-card">
-            <div class="logo" style="margin-bottom: 20px;"><i class="fas fa-sync-alt"></i> LifeSync AI</div>
-            <h3 style="color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem;">Confirm Your Upgrade</h3>
+            <div class="billing-logo-wrapper">
+                <i class="fas fa-sync-alt"></i> LifeSync
+            </div>
+            <h3 class="billing-subtitle">Confirm Your Upgrade</h3>
             <h2 id="billing-plan-title">Pro Plan</h2>
-            <div id="billing-plan-amount" class="billing-plan-price">₹499<span>/lifetime</span></div>
+            <div id="billing-plan-amount" class="billing-plan-price">₹499<span>/year</span></div>
             
             <div id="billing-plan-features" class="billing-features">
                 <!-- Features populated by JS -->
             </div>
-
-            <div id="billing-loader" class="billing-loader"></div>
             
             <button id="billing-confirm-btn" class="billing-action-btn">Proceed to Secure Payment</button>
-            <p style="margin-top: 15px; font-size: 0.8rem; color: #64748b; cursor: pointer;" onclick="closeBillingModal()">Cancel and go back</p>
+            <div class="billing-cancel-link" onclick="closeBillingModal()">Cancel and go back</div>
         </div>
     </div>
 
     <div id="payment-feedback-modal" class="payment-feedback-modal">
         <div class="payment-feedback-icon"></div>
-        <h3 style="color: #f8fafc; margin-bottom: 10px;">Payment Successful</h3>
-        <p style="color: #94a3b8; font-size: 0.9rem;">Your account is being upgraded...</p>
+        <h3 style="margin-bottom: 10px;">Status</h3>
+        <p style="font-size: 0.9rem;">Please wait...</p>
     </div>
 
     <!-- Scripts -->

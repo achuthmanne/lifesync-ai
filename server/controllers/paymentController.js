@@ -75,7 +75,7 @@ exports.verifyPayment = async (req, res) => {
 
         // Update user
         const expiryDate = new Date();
-        expiryDate.setMonth(expiryDate.getMonth() + 1); // 1 month validity
+        expiryDate.setFullYear(expiryDate.getFullYear() + 1); // 1 year validity
 
         const user = await User.findByIdAndUpdate(req.user.id, {
             plan: plan,
@@ -119,7 +119,7 @@ exports.handleWebhook = async (req, res) => {
             const plan = payload.notes.plan;
 
             const expiryDate = new Date();
-            expiryDate.setMonth(expiryDate.getMonth() + 1);
+            expiryDate.setFullYear(expiryDate.getFullYear() + 1);
 
             await User.findByIdAndUpdate(userId, {
                 plan: plan,
