@@ -1,4 +1,36 @@
 document.addEventListener('DOMContentLoaded', async () => {
+    // Startup Preloader Logic
+    const preloader = document.getElementById('startup-preloader');
+    const preloaderBar = document.getElementById('preloader-bar');
+    
+    if (preloader && preloaderBar) {
+        // Simulate initial fast progress
+        setTimeout(() => preloaderBar.style.width = '30%', 100);
+        setTimeout(() => preloaderBar.style.width = '65%', 400);
+        setTimeout(() => preloaderBar.style.width = '95%', 800);
+
+        // Hide preloader once main initialization is done
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                preloaderBar.style.width = '100%';
+                setTimeout(() => {
+                    preloader.classList.add('fade-out');
+                    // Remove from DOM after transition
+                    setTimeout(() => preloader.remove(), 800);
+                }, 300);
+            }, 500);
+        });
+
+        // Fallback: If 'load' event already fired or takes too long
+        setTimeout(() => {
+            if (preloader.parentElement) {
+                preloaderBar.style.width = '100%';
+                preloader.classList.add('fade-out');
+                setTimeout(() => preloader.remove(), 800);
+            }
+        }, 3000);
+    }
+
     let appTime = new Date();
 
     const syncAppTime = (time) => {
