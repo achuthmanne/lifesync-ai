@@ -68,6 +68,7 @@ app.use('/api/notifications', require('./server/routes/notifications'));
 app.use('/api/feedback', require('./server/routes/feedback'));
 app.use('/api/admin', require('./server/routes/admin'));
 app.use('/api/warranties', require('./server/routes/warranties'));
+app.use('/api/payments', require('./server/routes/payments'));
 
 // 6. Serve static uploads
 app.use('/uploads', express.static(path.join(__dirname, 'server/uploads')));

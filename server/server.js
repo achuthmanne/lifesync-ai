@@ -38,7 +38,7 @@ app.use('/api/notifications', require('./routes/notifications'));
 app.use('/api/feedback', require('./routes/feedback'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/warranties', require('./routes/warranties'));
-
+app.use('/api/payments', require('./routes/payments'));
 // Serve static assets
 app.use('/uploads', express.static('server/uploads'));
 
