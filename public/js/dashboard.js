@@ -250,7 +250,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Auth Check
     const token = localStorage.getItem('token');
-    const user = JSON.parse(localStorage.getItem('user'));
+    let user = JSON.parse(localStorage.getItem('user'));
     const landingView = document.getElementById('landing-view');
     const appView = document.getElementById('app-view');
     const authModal = document.getElementById('auth-modal');
@@ -895,6 +895,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (meData.success) {
                     const latestUser = meData.data;
                     localStorage.setItem('user', JSON.stringify(latestUser));
+                    user = latestUser; // Update global reference
                     
                     const planName = document.getElementById('sidebar-plan-name');
                     const usageBar = document.getElementById('usage-bar-fill');
