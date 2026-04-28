@@ -4,6 +4,7 @@ const notificationService = require('../services/notificationService');
 const monitoringService = require('../services/monitoringService');
 const timeService = require('../services/timeService');
 const User = require('../models/User');
+const socketHandler = require('../sockets/socketHandler');
 
 // @desc    Get all products
 // @route   GET /api/products
@@ -53,6 +54,9 @@ exports.createProduct = async (req, res) => {
         // Update user usage
         await User.findByIdAndUpdate(req.user.id, { $inc: { 'usage.products': 1 } });
         
+        // Notify client for real-time UI update
+        socketHandler.notifyUser(req.user.id, 'product_update', product);
+        
         // Trigger AI analysis asynchronously for immediate UI feedback
         aiService.analyzeProduct(product.id).catch(err => console.error('AI Analysis Error:', err));
 
@@ -88,6 +92,9 @@ exports.updateProduct = async (req, res) => {
             runValidators: true
         });
 
+        // Notify client for real-time UI update
+        socketHandler.notifyUser(req.user.id, 'product_update', product);
+
         // Re-trigger AI analysis
         aiService.analyzeProduct(product.id).catch(err => console.error('AI Analysis Error:', err));
 
@@ -119,6 +126,10 @@ exports.deleteProduct = async (req, res) => {
         await product.deleteOne();
         // Update user usage
         await User.findByIdAndUpdate(req.user.id, { $inc: { 'usage.products': -1 } });
+
+        // Notify client for real-time UI update
+        socketHandler.notifyUser(req.user.id, 'product_update', { _id: req.params.id, deleted: true });
+
         res.status(200).json({ success: true, data: {} });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });

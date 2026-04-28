@@ -56,7 +56,11 @@ const api = {
         }
 
         try {
-            const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+            let url = `${API_BASE_URL}${endpoint}`;
+            if (method === 'GET') {
+                url += (url.includes('?') ? '&' : '?') + 't=' + Date.now();
+            }
+            const response = await fetch(url, config);
             const data = await response.json();
             
             if (!response.ok) {
