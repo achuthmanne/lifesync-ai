@@ -2,10 +2,20 @@ const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const User = require('../models/User');
 
-const instance = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID,
-    key_secret: process.env.RAZORPAY_KEY_SECRET
-});
+let instance;
+try {
+    if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+        instance = new Razorpay({
+            key_id: process.env.RAZORPAY_KEY_ID,
+            key_secret: process.env.RAZORPAY_KEY_SECRET
+        });
+        console.log('[Payment] Razorpay initialized successfully.');
+    } else {
+        console.warn('[Payment] RAZORPAY_KEY_ID or RAZORPAY_KEY_SECRET missing. Payment features will be unavailable.');
+    }
+} catch (error) {
+    console.error('[Payment] Failed to initialize Razorpay:', error.message);
+}
 
 const PLAN_PRICES = {
     pro: 499,
@@ -31,6 +41,10 @@ exports.createOrder = async (req, res) => {
         
         if (!PLAN_PRICES[plan]) {
             return res.status(400).json({ success: false, message: 'Invalid plan selected' });
+        }
+
+        if (!instance) {
+            return res.status(503).json({ success: false, message: 'Payment gateway not configured. Please contact support.' });
         }
 
         const options = {
