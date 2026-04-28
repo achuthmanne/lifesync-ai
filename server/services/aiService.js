@@ -413,10 +413,12 @@ exports.chatWithAI = async (userId, userMessage, productId, history = [], curren
             * User is CURRENTLY A GUEST. They cannot see their own products yet.
             * If they ask about THEIR specific products, say: "As you are currently a guest, I cannot see your personal inventory. Please Login or Create an Account first so I can provide personalized insights for your products!"
             * For any question NOT related to LifeSync features or the landing page, politely state: "I am specialized in LifeSync platform details. For other queries, please join our community by signing up!"
+            * CONVERSATION LIMIT (SOFT): If User Status is Guest AND history length is > 6 (3 exchanges), politely tell them: "I've shared a lot of info for now! To continue our chat and start managing your own products, please Sign Up or Login to your free account."
 
         STRICT CONTEXT:
         - User's Current Screen: ${currentScreen}
         - User Status: ${isGuest ? 'Guest (Landing Page)' : 'Authenticated User'}
+        - History Length: ${history.length} messages
         - Inventory Context: ${fullContext}
         - Disclaimer (Mandatory for health/risk): Always include "This analysis is an estimate based on usage patterns and provided inputs."
 
