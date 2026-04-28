@@ -359,10 +359,8 @@ exports.chatWithAI = async (userId, userMessage, productId, history = [], curren
         // Hard limit for guests: 5 exchanges (10 messages)
         if (isGuest && history.length >= 10) {
             return {
-                data: {
-                    text: "Guest limit reached. To protect our AI resources, we only allow a few questions for guest users. Please **Sign Up** for a free account to unlock unlimited chat and start tracking your products!",
-                    provider: "LifeSync System"
-                }
+                text: "Guest limit reached. To protect our AI resources, we only allow a few questions for guest users. Please **Sign Up** for a free account to unlock unlimited chat and start tracking your products!",
+                provider: "LifeSync System"
             };
         }
 
