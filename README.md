@@ -1,7 +1,7 @@
 # ⚡ LifeSync AI
 > Intelligent product lifecycle management powered by multi-engine AI. Track, manage, and extend the life of your physical assets effortlessly.
 
----
+----
 
 ## 📖 Overview
 **LifeSync AI** is a modern, SaaS-style web application designed to bridge the gap between physical products and digital intelligence. It allows users to track their physical inventory, securely store warranties, and receive proactive, AI-generated insights regarding product health, maintenance, and failure probabilities. 
