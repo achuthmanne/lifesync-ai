@@ -398,9 +398,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Socket Initialization
     const socket = io();
+    // Shared Socket Auth helper
+    window.authenticateSocket = () => {
+        if (socket && user) {
+            const userId = user._id || user.id;
+            if (userId) {
+                console.log('[Socket] Authenticating as:', userId);
+                socket.emit('authenticate', userId);
+            }
+        }
+    };
+    
     socket.on('connect', () => {
-        const userId = user._id || user.id;
-        socket.emit('authenticate', userId);
+        window.authenticateSocket();
     });
 
     socket.on('product_update', (updatedProduct) => {
@@ -897,6 +907,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const latestUser = meData.data;
                     localStorage.setItem('user', JSON.stringify(latestUser));
                     user = latestUser; // Update global reference
+                    window.authenticateSocket(); // Re-sync socket auth with fresh ID
                     updateBillingUsage(); // Refresh Billing UI if visible
                     
                     const planName = document.getElementById('sidebar-plan-name');
