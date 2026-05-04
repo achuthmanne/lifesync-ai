@@ -1,7 +1,7 @@
 # ⚡ LifeSync AI
 > Intelligent product lifecycle management powered by multi-engine AI. Track, manage, and extend the life of your physical assets effortlessly.
 
-----
+---
 
 ## 📖 Overview
 **LifeSync AI** is a modern, SaaS-style web application designed to bridge the gap between physical products and digital intelligence. It allows users to track their physical inventory, securely store warranties, and receive proactive, AI-generated insights regarding product health, maintenance, and failure probabilities. 
@@ -88,21 +88,47 @@ The app will be running at `http://localhost:5000`.
 
 ## 🔑 Environment Variables
 
-To fully run the application and enable AI features, you will need to supply the following environment variables in your `.env` file:
+To run this application, you must configure the required environment variables in a `.env` file.
 
-| Variable | Description |
-| --- | --- |
-| `MONGO_URI` | Your MongoDB Atlas connection string |
-| `JWT_SECRET` | Secure string for signing JSON Web Tokens |
-| `GEMINI_API_KEY` | Google Gemini API key (Primary AI Engine) |
-| `GROQ_API_KEY` | Groq API key (Vision & Fallback AI) |
-| `OPENAI_API_KEY` | OpenAI API key (Fallback AI) |
-| `EMAIL_USER` | SMTP Email address for sending notifications |
-| `EMAIL_PASSWORD` | SMTP Email App Password |
+⚠️ **Important:**
 
-*(Note: The app features a resilient AI fallback system. If one API key is missing or rate-limited, it automatically switches to the next available engine).*
+* Never commit your `.env` file to GitHub
+* Never expose API keys or secrets publicly
+
+| Variable         | Description                                  |
+| ---------------- | -------------------------------------------- |
+| `MONGO_URI`      | Your MongoDB Atlas connection string         |
+| `JWT_SECRET`     | Secure string for signing JSON Web Tokens    |
+| `GEMINI_API_KEY` | API key for AI services                      |
+| `GROQ_API_KEY`   | API key for fallback AI services             |
+| `OPENAI_API_KEY` | API key for additional AI support            |
+| `EMAIL_USER`     | SMTP email address for sending notifications |
+| `EMAIL_PASSWORD` | SMTP app password for the email service      |
+
+*(Note: The system includes a fallback mechanism — if one AI service is unavailable or rate-limited, it automatically switches to another available provider.)*
 
 ---
+
+### 🛡️ Security Note
+
+All sensitive credentials must be stored securely using environment variables.  
+Do **not** hardcode or share any API keys in public repositories.
+
+---
+
+### 📁 Example `.env` (Do NOT use real values)
+
+```env
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_secure_random_string
+
+GEMINI_API_KEY=your_api_key
+GROQ_API_KEY=your_api_key
+OPENAI_API_KEY=your_api_key
+
+EMAIL_USER=your_email_address
+EMAIL_PASSWORD=your_email_app_password
+```
 
 ## ☁️ Deployment
 

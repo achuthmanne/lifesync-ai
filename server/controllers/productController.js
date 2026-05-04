@@ -11,7 +11,7 @@ const socketHandler = require('../sockets/socketHandler');
 // @access  Private
 exports.getProducts = async (req, res) => {
     try {
-        const products = await Product.find({ user: req.user.id });
+        const products = await Product.find({ user: req.user.id }).sort({ createdAt: -1 });
         const enrichedProducts = products.map(p => monitoringService.enrichProductData(p));
         res.status(200).json({ 
             success: true, 

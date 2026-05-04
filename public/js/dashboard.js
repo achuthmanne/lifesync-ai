@@ -963,8 +963,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             const viewAllBtn = document.getElementById('view-all-products-btn');
             const insightsSection = document.querySelector('.insights-section');
             
-            if (viewAllBtn) viewAllBtn.style.display = products.length > 2 ? 'block' : 'none';
+            if (viewAllBtn) viewAllBtn.style.display = products.length > 4 ? 'block' : 'none';
             if (insightsSection) insightsSection.style.display = products.length > 0 ? 'block' : 'none';
+
+            // Refresh Full Inventory if modal is open
+            const fullInventoryModal = document.getElementById('full-inventory-modal');
+            if (fullInventoryModal && fullInventoryModal.style.display === 'flex') {
+                loadAllProducts();
+            }
 
             // Refresh Analytics if visible
             if (analyticsView.style.display === 'block') {
@@ -989,7 +995,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                 `;
             } else {
-                const mainProducts = products.slice(0, 2);
+                const mainProducts = products.slice(0, 4);
                 productsList.innerHTML = mainProducts.map(p => renderProductCard(p)).join('');
             }
 
@@ -1449,7 +1455,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             productModal.style.display = 'none';
             stopCamera();
             productForm.reset();
-            loadDashboard();
+            await loadDashboard();
         } catch (error) {
             showNotification(error.message, 'error');
         } finally {
