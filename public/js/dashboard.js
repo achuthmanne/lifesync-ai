@@ -963,7 +963,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const viewAllBtn = document.getElementById('view-all-products-btn');
             const insightsSection = document.querySelector('.insights-section');
             
-            if (viewAllBtn) viewAllBtn.style.display = products.length > 4 ? 'block' : 'none';
+            if (viewAllBtn) viewAllBtn.style.display = products.length > 2 ? 'block' : 'none';
             if (insightsSection) insightsSection.style.display = products.length > 0 ? 'block' : 'none';
 
             // Refresh Full Inventory if modal is open
@@ -995,7 +995,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                 `;
             } else {
-                const mainProducts = products.slice(0, 4);
+                const mainProducts = products.slice(0, 2);
                 productsList.innerHTML = mainProducts.map(p => renderProductCard(p)).join('');
             }
 
