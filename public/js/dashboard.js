@@ -1097,14 +1097,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     let quaggaActive = false;
 
     const stopCamera = () => {
-        if (quaggaActive) {
+        console.log("[Camera] Stopping...");
+        try {
             Quagga.stop();
-            quaggaActive = false;
+        } catch (e) {
+            console.warn("[Camera] Quagga stop error:", e);
         }
-        scannerView.innerHTML = `
-            <i class="fas fa-camera" style="font-size: 3rem; opacity: 0.2;"></i>
-            <p style="margin-top: 15px; font-size: 0.9rem;">Initializing AI Vision...</p>
-        `;
+        quaggaActive = false;
+        
+        if (scannerView) {
+            scannerView.innerHTML = `
+                <i class="fas fa-camera" style="font-size: 3rem; opacity: 0.2;"></i>
+                <p style="margin-top: 15px; font-size: 0.9rem;">Initializing AI Vision...</p>
+            `;
+        }
     };
 
     const startCamera = async () => {
@@ -1169,7 +1175,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (!code) return;
 
                     console.log("Barcode detected:", code);
-                    quaggaActive = false;
+                    // Don't set quaggaActive to false yet, just prevent re-entry
+                    if (window._isProcessingScan) return;
+                    window._isProcessingScan = true;
                     
                     try {
                         const overlay = document.createElement('div');
@@ -1320,6 +1328,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }, 2000);
             }
         } finally {
+            window._isProcessingScan = false;
             fetchingStatus.style.display = 'none';
             startScanBtn.disabled = false;
             barcodeUpload.disabled = false;
@@ -1424,6 +1433,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         productModal.style.display = 'none';
         stopCamera();
     };
+
+    // Close on background click
+    window.addEventListener('click', (e) => {
+        if (e.target === productModal) {
+            productModal.style.display = 'none';
+            stopCamera();
+        }
+    });
     
     // Form Submission
     productForm.onsubmit = async (e) => {
